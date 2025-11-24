@@ -12,8 +12,8 @@ Pré-requisitos: JDK 17+ e Maven.
 
 ```bash
 # clonar
-git clone <repo-url>
-cd progress-quest-java
+git clone <https://github.com/ofranbraga/ProgressQuest>
+cd ProgressQuest
 
 
 # compilar
