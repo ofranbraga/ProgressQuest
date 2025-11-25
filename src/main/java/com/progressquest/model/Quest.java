@@ -16,8 +16,8 @@ public class Quest {
         this.rewardItem = rewardItem;
     }
 
-    public void registerKill() {currentKills++;}
-    public boolean isCompleted() { return currentKills >= requiredKills;}
+    public void registerKill() { currentKills++; }
+    public boolean isCompleted() { return currentKills >= requiredKills; }
 
     public String getTitle() { return title; }
     public String getDescription() { return description; }

@@ -42,7 +42,7 @@ public class GameEngine {
         } catch (InterruptedException ignored) { }
     }
 
-    //isso é para uso pela UI: start/stop expostos pela UI diretamente (UI usa os métodos tick etc)
+    //para uso pela UI: start/stop expostos pela UI diretamente (UI usa os métodos tick etc)
     public void startHeadlessScheduler() {
         if (scheduler != null && !scheduler.isShutdown()) return;
         scheduler = Executors.newSingleThreadScheduledExecutor();

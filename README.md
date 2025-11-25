@@ -21,4 +21,4 @@ mvn -q clean package
 
 
 # executar
-mvn -q exec:java -Dexec.mainClass="com.progressquest.Main"
+java --module-path "C:\javafx\lib" --add-modules javafx.controls,javafx.fxml -cp target/classes com.progressquest.ui.MainApp
