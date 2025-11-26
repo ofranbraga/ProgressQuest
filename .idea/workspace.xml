@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d92519-5749-4a07-87ef-ef8cab3c9502" name="Changes" comment="Concluido a implementação do codigo de itens aleatorios, podendo passar por algumas alterações ao longo do projeto.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Attributes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Attributes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Character.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Character.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Quest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Quest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/util/RandomNameGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/util/RandomNameGenerator.java" afterDir="false" />
-    </list>
+    <list default="true" id="e1d92519-5749-4a07-87ef-ef8cab3c9502" name="Changes" comment="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -187,7 +176,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764031971066</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto.">
+      <option name="closed" value="true" />
+      <created>1764041450455</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1764041450455</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,6 +218,7 @@
     <MESSAGE value="Concluido a implementação do codigo dos monstros, podendo passar por algumas alterações ao longo do projeto." />
     <MESSAGE value="Concluido a implementação do codigo das Quests, podendo passar por algumas alterações ao longo do projeto." />
     <MESSAGE value="Concluido a implementação do codigo de itens aleatorios, podendo passar por algumas alterações ao longo do projeto." />
-    <option name="LAST_COMMIT_MESSAGE" value="Concluido a implementação do codigo de itens aleatorios, podendo passar por algumas alterações ao longo do projeto." />
+    <MESSAGE value="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto." />
+    <option name="LAST_COMMIT_MESSAGE" value="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto." />
   </component>
 </project>
