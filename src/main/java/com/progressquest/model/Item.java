@@ -1,26 +1,37 @@
 package com.progressquest.model;
 
 public class Item {
-    public enum Type { WEAPON, ARMOR, CONSUMABLE }
-    public enum Slot { MAIN_HAND, OFF_HAND, HEAD, CHEST, LEGS }
+
+    public enum Slot {
+        WEAPON, SHIELD, HELM, HAUBERK, BRASSAIRTS, VAMBRACES,
+        GAUNTLETS, GAMBESON, CUISSES, GREAVES, SOLLERETS
+    }
 
     private final String name;
-    private final Type type;
-    private final Attributes bonus;
+    private final Slot slot;
+    private final int bonus; // Poder do item
+    private final String statAffected; // Ex: STR
 
-    public Item(String name, Type type, Attributes bonus) {
+    public Item(String name, Slot slot, int bonus, String statAffected) {
         this.name = name;
-        this.type = type;
+        this.slot = slot;
         this.bonus = bonus;
+        this.statAffected = statAffected;
     }
 
     public String getName() { return name; }
-    public Type getType() { return type; }
-    public Attributes getBonus() { return bonus; }
+    public Slot getSlot() { return slot; }
+    public int getBonus() { return bonus; }
+    public String getStatAffected() { return statAffected; }
 
-    public Slot getSlot() {
-        if (type == Type.WEAPON) return Slot.MAIN_HAND;
-        if (type == Type.ARMOR) return Slot.CHEST;
-        return Slot.OFF_HAND;
+    @Override
+    public String toString() {
+        //formato para tooltip ou log: "Espada (+2 STR)"
+        return String.format("%s %s %d", name, (bonus >= 0 ? "+" : ""), bonus);
+    }
+
+    //texto para aparecer na lista de equipamentos (ex:"Battle Axe")
+    public String getDisplayString() {
+        return name + " " + (bonus > 0 ? "+" + bonus : "");
     }
 }
