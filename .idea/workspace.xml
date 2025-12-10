@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d92519-5749-4a07-87ef-ef8cab3c9502" name="Changes" comment="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto." />
+    <list default="true" id="e1d92519-5749-4a07-87ef-ef8cab3c9502" name="Changes" comment="comentarios adicionados para facilitar no entendimento do codigo.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,7 +30,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ofranbraga/ProgressQuest.git&quot;,
-    &quot;accountId&quot;: &quot;24098286-9f66-4da3-ba25-58591b7e3bc2&quot;
+    &quot;accountId&quot;: &quot;46d6ef83-6588-4d05-9b20-3ff118abc47a&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -51,13 +55,14 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Francisco/Documents/UFPA/2025-4/Prog II/ProgressQuest&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/franc/OneDrive/Documents/UFPA/2025.4/Prog 2/ProgressQuest&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -79,7 +84,7 @@
   <component name="RunManager">
     <configuration name="JavaFX" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.progressquest.Main" />
-      <module name="progress-quest-java" />
+      <module name="progress-quest" />
       <option name="VM_PARAMETERS" value="--module-path &quot;C:\Windows\javafx-sdk-25.0.1\lib&quot; --add-modules javafx.controls,javafx.fxml" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -89,7 +94,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-jdk-30f59d01ecdd-cffe25b9f5b3-intellij.indexing.shared.core-IU-253.28294.334" />
+        <option value="bundled-js-predefined-d6986cc7102b-c7e53b3be11b-JavaScript-IU-253.28294.334" />
       </set>
     </attachedChunks>
   </component>
@@ -103,6 +109,8 @@
       <workItem from="1764028117388" duration="8741000" />
       <workItem from="1764036877581" duration="1482000" />
       <workItem from="1764038374080" duration="1255000" />
+      <workItem from="1765387734195" duration="3183000" />
+      <workItem from="1765402906148" duration="2490000" />
     </task>
     <task id="LOCAL-00001" summary="commit inicial">
       <option name="closed" value="true" />
@@ -184,7 +192,47 @@
       <option name="project" value="LOCAL" />
       <updated>1764041450455</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Game data adicionado para novas implementações para a interface grafica do jogo, como quests, nome das raças, classes e feitiços.">
+      <option name="closed" value="true" />
+      <created>1765390458517</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1765390458517</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Arquivo ATRIBUTTES atualizado. Arquivo Item totalmente alterado para receber alterações dentro do GameEngine, para melhoria da interface">
+      <option name="closed" value="true" />
+      <created>1765402955204</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1765402955208</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Arquivo Item totalmente alterado para receber alterações dentro do GameEngine, para melhoria da interface">
+      <option name="closed" value="true" />
+      <created>1765402988478</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1765402988478</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Arquivo Character.java totalmente alterado para receber alterações dentro do GameEngine, para melhoria da interface. Adicionado HP, Mana, Spellbook, Plot e lógica de auto-equipar.">
+      <option name="closed" value="true" />
+      <created>1765403432559</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1765403432559</updated>
+    </task>
+    <task id="LOCAL-00015" summary="comentarios adicionados para facilitar no entendimento do codigo.">
+      <option name="closed" value="true" />
+      <created>1765403772669</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1765403772669</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -219,6 +267,11 @@
     <MESSAGE value="Concluido a implementação do codigo das Quests, podendo passar por algumas alterações ao longo do projeto." />
     <MESSAGE value="Concluido a implementação do codigo de itens aleatorios, podendo passar por algumas alterações ao longo do projeto." />
     <MESSAGE value="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto." />
-    <option name="LAST_COMMIT_MESSAGE" value="Jogo base completamente finalizado. Algumas alterações pequenas e erros corrigidos dentro dos codigos. Por fim, interface grafica introduzida ao projeto." />
+    <MESSAGE value="Game data adicionado para novas implementações para a interface grafica do jogo, como quests, nome das raças, classes e feitiços." />
+    <MESSAGE value="Arquivo ATRIBUTTES atualizado. Arquivo Item totalmente alterado para receber alterações dentro do GameEngine, para melhoria da interface" />
+    <MESSAGE value="Arquivo Item totalmente alterado para receber alterações dentro do GameEngine, para melhoria da interface" />
+    <MESSAGE value="Arquivo Character.java totalmente alterado para receber alterações dentro do GameEngine, para melhoria da interface. Adicionado HP, Mana, Spellbook, Plot e lógica de auto-equipar." />
+    <MESSAGE value="comentarios adicionados para facilitar no entendimento do codigo." />
+    <option name="LAST_COMMIT_MESSAGE" value="comentarios adicionados para facilitar no entendimento do codigo." />
   </component>
 </project>
