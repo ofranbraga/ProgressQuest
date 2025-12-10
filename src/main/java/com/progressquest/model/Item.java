@@ -9,7 +9,7 @@ public class Item {
 
     private final String name;
     private final Slot slot;
-    private final int bonus; // Poder do item
+    private final int bonus; //poder do item
     private final String statAffected; // Ex: STR
 
     public Item(String name, Slot slot, int bonus, String statAffected) {

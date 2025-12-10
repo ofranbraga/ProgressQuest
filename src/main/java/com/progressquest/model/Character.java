@@ -12,7 +12,7 @@ public class Character {
     private int level;
     private long experience;
 
-    // Status derivados
+    //status derivados
     private int hpMax;
     private int mpMax;
 
@@ -22,7 +22,7 @@ public class Character {
     private final List<String> spellBook;
 
     private Quest currentQuest;
-    private String currentPlot; // Ex: "Prologue", "Act I"
+    private String currentPlot; //ex: "Prologue", "Act I"
 
     public Character(Attributes attrs) {
         this.attributes = attrs;
@@ -42,7 +42,7 @@ public class Character {
     }
 
     public void recalcStats() {
-        // HP baseado em CON, MP baseado em INT/WIS
+        //HP baseado em CON, MP baseado em INT/WIS
         this.hpMax = 10 + (attributes.get("CON") * 2) + (level * 5);
         this.mpMax = 5 + (attributes.get("INT") + attributes.get("WIS")) + (level * 2);
     }
@@ -61,22 +61,22 @@ public class Character {
     private void levelUp() {
         this.experience -= xpToNextLevel();
         this.level++;
-        this.attributes.increaseRandom(); // Aumenta um atributo
+        this.attributes.increaseRandom(); //aumenta um atributo
         recalcStats();
     }
 
-    // Lógica core do PQ: Auto-equipar se for melhor
+    //lógica core do PQ: Auto-equipar se for melhor
     public void lootItem(Item newItem) {
         Item current = equipment.get(newItem.getSlot());
 
         if (current == null || newItem.getBonus() > current.getBonus()) {
-            // Equipa o novo
+            //equipa o novo
             equipment.put(newItem.getSlot(), newItem);
             if (current != null) {
                 inventory.add(current); // Guarda o velho
             }
         } else {
-            // Guarda o novo no inventário
+            //guarda o novo no inventário
             inventory.add(newItem);
         }
     }
@@ -87,7 +87,7 @@ public class Character {
         }
     }
 
-    // Getters
+    //getters
     public String getName() { return name; }
     public String getRace() { return race; }
     public String getClazz() { return clazz; }
