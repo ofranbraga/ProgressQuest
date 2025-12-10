@@ -1,10 +1,9 @@
 package com.progressquest;
 
-import com.progressquest.engine.GameEngine;
+import com.progressquest.ui.MainApp;
 
 public class Main {
     public static void main(String[] args) {
-        GameEngine engine = new GameEngine();
-        engine.startConsole(); // método que roda a simulação no console
+        MainApp.main(args);
     }
 }

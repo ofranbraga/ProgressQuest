@@ -1,150 +1,296 @@
 package com.progressquest.ui;
 
+import com.progressquest.data.GameData;
 import com.progressquest.engine.GameEngine;
 import com.progressquest.model.Attributes;
-import com.progressquest.model.Item;
-import com.progressquest.model.Monster;
-import com.progressquest.model.Quest;
 import com.progressquest.model.Character;
-import com.progressquest.util.RandomNameGenerator;
+import com.progressquest.model.Item;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 public class MainApp extends Application {
-    private final Random rnd = new Random();
-    private ScheduledExecutorService scheduler;
-    private Character hero;
-    private Label lblStatus;
-    private ListView<String> lvInventory;
-    private Button btnStartStop;
-    private boolean running = false;
+
+    private Stage window;
+    private Character tempChar; // Personagem sendo criado
+    private GameEngine engine;
+
+    private Label lblName, lblRaceClass, lblLevel;
+    private Label lblStats, lblHP, lblMP; // <--- O ERRO lblStats ESTAVA AQUI (TEM QUE DECLARAR)
+    private ProgressBar pbExp, pbAction;
+    private Label lblCurrentAction;
+    private ListView<String> listEquip, listInv, listSpells, listQuests;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) {
-        // Criar herói (pode ser substituído carregando arquivo)
-        Attributes attrs = new Attributes(5, 5, 5, 5, 5);
-        hero = new Character("Herói", "Humano", "Aventureiro", attrs);
-        hero.setCurrentQuest(new Quest("Primeira Missão", "Mate 3 monstros", 3, 150, null));
+        this.window = primaryStage;
+        window.setTitle("Progress Quest");
 
-        lblStatus = new Label();
-        lvInventory = new ListView<>();
-        btnStartStop = new Button("Iniciar");
+        // Inicia na tela de criação
+        showCreationScreen();
+        window.show();
+    }
 
-        btnStartStop.setOnAction(e -> {
-            if (!running) startSimulation(); else stopSimulation();
+    //TELA DE CRIAÇÃO
+    private void showCreationScreen() {
+        tempChar = new Character(new Attributes());
+        tempChar.getAttributes().roll();
+
+        BorderPane root = new BorderPane();
+        root.setPadding(new Insets(10));
+
+        //nome
+        HBox topBox = new HBox(10);
+        TextField tfName = new TextField("Vuckmoot");
+        topBox.getChildren().addAll(new Label("Name:"), tfName);
+        root.setTop(topBox);
+
+        //Raça, Classe, Stats
+        GridPane centerGrid = new GridPane();
+        centerGrid.setHgap(10);
+        centerGrid.setVgap(10);
+        centerGrid.setPadding(new Insets(10, 0, 10, 0));
+
+        //Raças
+        VBox raceBox = new VBox(5);
+        raceBox.setStyle("-fx-border-color: lightgray; -fx-padding: 5;");
+        raceBox.getChildren().add(new Label("Race"));
+        ToggleGroup raceGroup = new ToggleGroup();
+        for (String r : GameData.RACES) {
+            RadioButton rb = new RadioButton(r);
+            rb.setToggleGroup(raceGroup);
+            if(r.equals("Double Hobbit")) rb.setSelected(true);
+            raceBox.getChildren().add(rb);
+        }
+
+        ScrollPane scrollRace = new ScrollPane(raceBox);
+        scrollRace.setPrefHeight(300);
+
+        VBox classBox = new VBox(5);
+        classBox.setStyle("-fx-border-color: lightgray; -fx-padding: 5;");
+        classBox.getChildren().add(new Label("Class"));
+        ToggleGroup classGroup = new ToggleGroup();
+        for (String c : GameData.CLASSES) {
+            RadioButton rb = new RadioButton(c);
+            rb.setToggleGroup(classGroup);
+            if(c.equals("Fighter/Organist")) rb.setSelected(true);
+            classBox.getChildren().add(rb);
+        }
+        ScrollPane scrollClass = new ScrollPane(classBox);
+        scrollClass.setPrefHeight(300);
+
+        VBox statsBox = new VBox(5);
+        statsBox.setStyle("-fx-border-color: lightgray; -fx-padding: 5;");
+        statsBox.getChildren().add(new Label("Stats"));
+        Label lblStatsDisplay = new Label();
+        updateCreationStats(lblStatsDisplay);
+        statsBox.getChildren().add(lblStatsDisplay);
+
+        Button btnRoll = new Button("Roll");
+        btnRoll.setMaxWidth(Double.MAX_VALUE);
+        btnRoll.setOnAction(e -> {
+            tempChar.getAttributes().roll();
+            updateCreationStats(lblStatsDisplay);
         });
 
-        Button btnKillNow = new Button("Forçar Monstro");
-        btnKillNow.setOnAction(e -> {
-            doEncounter();
-            updateUI();
+        Button btnSold = new Button("Sold!");
+        btnSold.setMaxWidth(Double.MAX_VALUE);
+        btnSold.setFont(Font.font("System", FontWeight.BOLD, 14));
+        btnSold.setOnAction(e -> {
+            //pega a raça e classe selecionadas
+            RadioButton rbRace = (RadioButton) raceGroup.getSelectedToggle();
+            RadioButton rbClass = (RadioButton) classGroup.getSelectedToggle();
+
+            if (rbRace != null && rbClass != null) {
+                tempChar.init(tfName.getText(), rbRace.getText(), rbClass.getText());
+                startGame();
+            }
         });
 
-        HBox controls = new HBox(8, btnStartStop, btnKillNow);
-        VBox root = new VBox(10, lblStatus, lvInventory, controls);
-        root.setPadding(new Insets(12));
-        VBox.setVgrow(lvInventory, Priority.ALWAYS);
+        statsBox.getChildren().addAll(new Separator(), btnRoll, new Region(), btnSold);
 
-        updateUI();
+        centerGrid.add(scrollRace, 0, 0);
+        centerGrid.add(scrollClass, 1, 0);
+        centerGrid.add(statsBox, 2, 0);
 
-        Scene scene = new Scene(root, 640, 420);
-        primaryStage.setTitle("Progress Quest - UI (JavaFX)");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        ColumnConstraints col1 = new ColumnConstraints(); col1.setPercentWidth(33);
+        ColumnConstraints col2 = new ColumnConstraints(); col2.setPercentWidth(33);
+        ColumnConstraints col3 = new ColumnConstraints(); col3.setPercentWidth(33);
+        centerGrid.getColumnConstraints().addAll(col1, col2, col3);
 
-        primaryStage.setOnCloseRequest(e -> {
-            stopSimulation();
+        root.setCenter(centerGrid);
+        window.setScene(new Scene(root, 600, 450));
+    }
+
+    private void updateCreationStats(Label lbl) {
+        StringBuilder sb = new StringBuilder();
+        Map<String, Integer> s = tempChar.getAttributes().getAll();
+        s.forEach((k, v) -> sb.append(String.format("%s: %d\n", k, v)));
+        sb.append("\nTotal: ").append(tempChar.getAttributes().getTotal());
+        lbl.setText(sb.toString());
+    }
+
+    //TELA DO JOGO
+    private void startGame() {
+        engine = new GameEngine(tempChar);
+
+        BorderPane root = new BorderPane();
+
+        //FICHA E SPELLS
+        VBox col1 = new VBox(5);
+        col1.setPadding(new Insets(5));
+
+        VBox charSheet = createPanel("Character Sheet");
+        lblName = new Label();
+        lblRaceClass = new Label();
+        lblLevel = new Label();
+
+        //Inicializando lblStats e outros labels
+        lblStats = new Label(); // Importante inicializar aqui
+        lblHP = new Label();
+        lblMP = new Label();
+
+        charSheet.getChildren().addAll(lblName, lblRaceClass, lblLevel, new Separator(), lblStats, new Separator(), lblHP, lblMP);
+
+        VBox expBox = new VBox();
+        expBox.getChildren().add(new Label("Experience"));
+        pbExp = new ProgressBar(0);
+        pbExp.setMaxWidth(Double.MAX_VALUE);
+        expBox.getChildren().add(pbExp);
+
+        VBox spellBox = createPanel("Spell Book");
+        listSpells = new ListView<>();
+        VBox.setVgrow(listSpells, Priority.ALWAYS);
+        spellBox.getChildren().add(listSpells);
+
+        col1.getChildren().addAll(charSheet, expBox, spellBox);
+        VBox.setVgrow(spellBox, Priority.ALWAYS);
+
+        //EQUIPAMENTO E INVENTARIO
+        VBox col2 = new VBox(5);
+        col2.setPadding(new Insets(5));
+
+        VBox equipBox = createPanel("Equipment");
+        listEquip = new ListView<>();
+        VBox.setVgrow(listEquip, Priority.ALWAYS);
+        equipBox.getChildren().add(listEquip);
+
+        VBox invBox = createPanel("Inventory");
+        listInv = new ListView<>();
+        VBox.setVgrow(listInv, Priority.ALWAYS);
+        invBox.getChildren().add(listInv);
+
+        col2.getChildren().addAll(equipBox, invBox);
+        VBox.setVgrow(equipBox, Priority.ALWAYS);
+        VBox.setVgrow(invBox, Priority.ALWAYS);
+
+        //PLOT E QUESTS
+        VBox col3 = new VBox(5);
+        col3.setPadding(new Insets(5));
+
+        VBox plotBox = createPanel("Plot Development");
+        Label lblPlot = new Label("Prologue");
+        plotBox.getChildren().add(lblPlot);
+
+        VBox questBox = createPanel("Quests");
+        listQuests = new ListView<>();
+        VBox.setVgrow(listQuests, Priority.ALWAYS);
+        questBox.getChildren().add(listQuests);
+
+        col3.getChildren().addAll(plotBox, questBox);
+        VBox.setVgrow(questBox, Priority.ALWAYS);
+
+        //LAYOUT PRINCIPAL
+        GridPane grid = new GridPane();
+        grid.add(col1, 0, 0);
+        grid.add(col2, 1, 0);
+        grid.add(col3, 2, 0);
+
+        ColumnConstraints c = new ColumnConstraints(); c.setPercentWidth(33.3);
+        grid.getColumnConstraints().addAll(c, c, c);
+
+        root.setCenter(grid);
+
+        // BARRA DE AÇÃO
+        VBox bottom = new VBox(2);
+        bottom.setPadding(new Insets(5));
+        lblCurrentAction = new Label("Executing...");
+        pbAction = new ProgressBar(0);
+        pbAction.setMaxWidth(Double.MAX_VALUE);
+        bottom.getChildren().addAll(lblCurrentAction, pbAction);
+        root.setBottom(bottom);
+
+        engine.setCallbacks(
+                msg -> Platform.runLater(() -> {}),
+                () -> Platform.runLater(this::updateGameUI)
+        );
+
+        engine.start();
+        updateGameUI(); // Primeira atualização
+
+        window.setScene(new Scene(root, 800, 600));
+        window.setOnCloseRequest(e -> {
+            engine.stop();
             Platform.exit();
             System.exit(0);
         });
     }
 
-    private void startSimulation() {
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(this::tick, 0, 2, TimeUnit.SECONDS);
-        running = true;
-        Platform.runLater(() -> btnStartStop.setText("Parar"));
+    private VBox createPanel(String title) {
+        VBox box = new VBox(2);
+        box.setStyle("-fx-border-color: gray; -fx-border-width: 1; -fx-background-color: #f4f4f4;");
+        Label lbl = new Label(title);
+        lbl.setFont(Font.font("System", FontWeight.BOLD, 12));
+        lbl.setStyle("-fx-background-color: #ddd; -fx-padding: 2;");
+        lbl.setMaxWidth(Double.MAX_VALUE);
+        box.getChildren().add(lbl);
+        return box;
     }
 
-    private void stopSimulation() {
-        if (scheduler != null) scheduler.shutdownNow();
-        running = false;
-        Platform.runLater(() -> btnStartStop.setText("Iniciar"));
-    }
+    private void updateGameUI() {
+        //atualiza labels
+        lblName.setText(tempChar.getName());
+        lblRaceClass.setText(tempChar.getRace() + " " + tempChar.getClazz());
+        lblLevel.setText("Level " + tempChar.getLevel());
 
-    private void tick() {
-        try {
-            if (hero.getCurrentQuest() != null && !hero.getCurrentQuest().isCompleted()) {
-                if (rnd.nextDouble() < 0.7) {
-                    doEncounter();
-                } else {
-                    doFindItem();
-                }
-            } else {
-                if (rnd.nextDouble() < 0.5) {
-                    hero.setCurrentQuest(new Quest("Missão Gerada", "Mate 4 monstros", 4, 220, null));
-                }
-            }
-            Platform.runLater(this::updateUI);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        //stats
+        StringBuilder sb = new StringBuilder();
+        tempChar.getAttributes().getAll().forEach((k,v) -> sb.append(String.format("%s %d\n", k, v)));
+        lblStats.setText(sb.toString()); // Uso da variável lblStats
+
+        lblHP.setText("HP Max " + tempChar.getHpMax());
+        lblMP.setText("MP Max " + tempChar.getMpMax());
+
+        //bars
+        pbExp.setProgress((double)tempChar.getExperience() / tempChar.xpToNextLevel());
+        pbAction.setProgress((double)engine.getActionProgress() / engine.getActionMax());
+        lblCurrentAction.setText(engine.getCurrentAction());
+
+        //lists
+        listSpells.getItems().setAll(tempChar.getSpellBook());
+
+        listEquip.getItems().clear();
+        tempChar.getEquipment().forEach((slot, item) ->
+                listEquip.getItems().add(slot.toString() + ": " + item.getDisplayString()));
+
+        listInv.getItems().clear();
+        for(Item i : tempChar.getInventory()) listInv.getItems().add(i.toString());
+
+        listQuests.getItems().clear();
+        if(tempChar.getCurrentQuest() != null) {
+            listQuests.getItems().add("[] " + tempChar.getCurrentQuest().getTitle());
         }
-    }
-
-    private void doEncounter() {
-        Monster m = spawnMonster();
-        long xp = m.getRewardXP();
-        hero.gainExperience(xp);
-        if (hero.getCurrentQuest() != null) hero.getCurrentQuest().registerKill();
-        if (hero.getCurrentQuest() != null && hero.getCurrentQuest().isCompleted()) {
-            hero.gainExperience(hero.getCurrentQuest().getRewardXP());
-            hero.setCurrentQuest(new Quest("Nova Missão", "Mate 5 monstros", 5, 350, null));
-        }
-    }
-
-    private void doFindItem() {
-        Item it = generateRandomItem();
-        hero.addItem(it);
-    }
-
-    private Monster spawnMonster() {
-        String name = RandomNameGenerator.randomMonsterName();
-        int level = Math.max(1, hero.getLevel() + (int) (rnd.nextGaussian() * 2));
-        long rewardXP = 15 + level * 12;
-        return new Monster(name, Math.max(1, level), rewardXP, 0.15);
-    }
-
-    private Item generateRandomItem() {
-        String name = RandomNameGenerator.randomItemName();
-        Item.Type type = rnd.nextBoolean() ? Item.Type.WEAPON : Item.Type.ARMOR;
-        Attributes bonus = new Attributes(rnd.nextInt(3), rnd.nextInt(3), rnd.nextInt(3), 0, 0);
-        return new Item(name, type, bonus);
-    }
-
-    private void updateUI() {
-        lblStatus.setText(hero.status());
-        lvInventory.getItems().clear();
-        for (Item it : hero.getInventory()) {
-            String s = it.getName() + " (" + it.getType() + ") ";
-            lvInventory.getItems().add(s);
-        }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
