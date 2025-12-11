@@ -1,0 +1,110 @@
+classDiagram
+    %%MainApp inicia o Engine
+    MainApp ..> GameEngine : cria
+    MainApp ..> Character : cria
+
+    %%GameEngine gerencia o Personagem
+    GameEngine "1" --> "1" Character : gerencia
+
+    %%GameEngine depende de dados estáticos
+    GameEngine ..> GameData : usa
+    GameEngine ..> Monster : cria (temporário)
+
+    %%composição: Personagem TEM Atributos 
+    Character *-- "1" Attributes : possui
+
+    %%agregação: Personagem TEM Itens
+    Character o-- "0..*" Item : inventário/equipamento
+
+    %%associação Simples: Personagem TEM Missão
+    Character --> "0..1" Quest : realiza
+
+    %%dependências de Enum
+    Item ..> Slot : usa
+
+    class MainApp {
+        - window: Stage
+        - tempChar: Character
+        - engine: GameEngine
+        + start(primaryStage: Stage)
+        - showCreationScreen()
+        - startGame()
+        - updateGameUI()
+    }
+
+    class GameEngine {
+        - hero: Character
+        - scheduler: ScheduledExecutorService
+        - actionProgress: int
+        + start()
+        + stop()
+        - tick()
+        - completeAction()
+        - generateItem(): Item
+    }
+
+    class Character {
+        - name: String
+        - level: int
+        - experience: long
+        - hpMax: int
+        - mpMax: int
+        - spellBook: List~String~
+        + init(name: String, race: String, clazz: String)
+        + recalcStats()
+        + gainExperience(xp: long)
+        + lootItem(newItem: Item)
+        + learnSpell(spell: String)
+    }
+
+    class Attributes {
+        - stats: Map~String, Integer~
+        - rand: Random
+        + roll()
+        + increaseRandom()
+        + get(key: String): int
+        + getTotal(): int
+    }
+
+    class Item {
+        - name: String
+        - slot: Slot
+        - bonus: int
+        - statAffected: String
+        + getDisplayString(): String
+        + toString(): String
+    }
+
+    class Slot {
+        <<enumeration>>
+        WEAPON
+        SHIELD
+        HELM
+        HAUBERK
+        ...
+    }
+
+    class Quest {
+        - title: String
+        - requiredKills: int
+        - currentKills: int
+        - rewardXP: long
+        + registerKill()
+        + isCompleted(): boolean
+    }
+
+    class Monster {
+        - name: String
+        - level: int
+        - rewardXP: long
+        + getDropChance(): double
+    }
+
+    class GameData {
+        <<static>>
+        + RACES: List~String~
+        + CLASSES: List~String~
+        + MONSTERS: List~String~
+        + generateQuestName(): String
+        + getRandomMonster(): String
+    }

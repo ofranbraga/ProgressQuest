@@ -3,9 +3,10 @@
 
 Recriação simplificada da ideia de Progress Quest (jogo "zero-player") usando Java e POO.
 
+## UML
+https://www.mermaidchart.com/d/7bbe82da-48e2-4f5b-9092-d2565dd98ffc
 
 ## Como rodar
-
 
 Pré-requisitos: JDK 17+ e Maven.
 
