@@ -52,7 +52,6 @@ public class Attributes {
         }
     }
 
-
     //mantive para caso seja utilizado em algum npc no futuro
     public void increaseRandom() {
         String[] keys = stats.keySet().toArray(new String[0]);
