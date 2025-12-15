@@ -12,6 +12,8 @@ public class Character {
     private int level;
     private long experience;
 
+    private int attributePoints;
+
     //status derivados
     private int hpMax;
     private int mpMax;
@@ -30,7 +32,9 @@ public class Character {
         this.equipment = new HashMap<>();
         this.spellBook = new ArrayList<>();
         this.level = 1;
+        this.attributePoints = 0;
         this.experience = 0;
+
         this.currentPlot = "Prologue";
         recalcStats();
     }
@@ -42,14 +46,13 @@ public class Character {
     }
 
     public void recalcStats() {
-        //HP baseado em CON, MP baseado em INT/WIS
         this.hpMax = 10 + (attributes.get("CON") * 2) + (level * 5);
         this.mpMax = 5 + (attributes.get("INT") + attributes.get("WIS")) + (level * 2);
     }
 
     public void gainExperience(long xp) {
         this.experience += xp;
-        if (this.experience >= xpToNextLevel()) {
+        while (this.experience >= xpToNextLevel()) {
             levelUp();
         }
     }
@@ -61,22 +64,33 @@ public class Character {
     private void levelUp() {
         this.experience -= xpToNextLevel();
         this.level++;
-        this.attributes.increaseRandom(); //aumenta um atributo
+
+        //aqui o personagem começará a ganhar 3 pontos de atributo a cada nivell que subir
+        this.attributePoints += 3;
+
         recalcStats();
     }
 
-    //lógica core do PQ: Auto-equipar se for melhor
+    //utilizado para o jogador gastar os pontos manualmente
+    public boolean spendAttributePoint(String attrName) {
+        if (attributePoints > 0) {
+            attributes.increment(attrName);
+            attributePoints--;
+            recalcStats();
+            return true;
+        }
+        return false;
+    }
+
+    //lógica core do PQ: auto-equipar se for melhor
     public void lootItem(Item newItem) {
         Item current = equipment.get(newItem.getSlot());
-
         if (current == null || newItem.getBonus() > current.getBonus()) {
-            //equipa o novo
             equipment.put(newItem.getSlot(), newItem);
             if (current != null) {
-                inventory.add(current); // Guarda o velho
+                inventory.add(current);
             }
         } else {
-            //guarda o novo no inventário
             inventory.add(newItem);
         }
     }
@@ -94,6 +108,7 @@ public class Character {
     public int getLevel() { return level; }
     public long getExperience() { return experience; }
     public Attributes getAttributes() { return attributes; }
+    public int getAttributePoints() { return attributePoints; } // Novo Getter
     public int getHpMax() { return hpMax; }
     public int getMpMax() { return mpMax; }
     public List<Item> getInventory() { return inventory; }
