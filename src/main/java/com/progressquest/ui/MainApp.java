@@ -20,11 +20,11 @@ import java.util.Map;
 public class MainApp extends Application {
 
     private Stage window;
-    private Character tempChar; // Personagem sendo criado
+    private Character tempChar; //personagem sendo criado
     private GameEngine engine;
 
     private Label lblName, lblRaceClass, lblLevel;
-    private Label lblStats, lblHP, lblMP; // <--- O ERRO lblStats ESTAVA AQUI (TEM QUE DECLARAR)
+    private Label lblStats, lblHP, lblMP;
     private ProgressBar pbExp, pbAction;
     private Label lblCurrentAction;
     private ListView<String> listEquip, listInv, listSpells, listQuests;
@@ -38,7 +38,7 @@ public class MainApp extends Application {
         this.window = primaryStage;
         window.setTitle("Progress Quest");
 
-        // Inicia na tela de criação
+        //inicia na tela de criação
         showCreationScreen();
         window.show();
     }
@@ -158,7 +158,7 @@ public class MainApp extends Application {
         lblLevel = new Label();
 
         //Inicializando lblStats e outros labels
-        lblStats = new Label(); // Importante inicializar aqui
+        lblStats = new Label();
         lblHP = new Label();
         lblMP = new Label();
 
@@ -223,7 +223,7 @@ public class MainApp extends Application {
 
         root.setCenter(grid);
 
-        // BARRA DE AÇÃO
+        //BARRA DE AÇÃO
         VBox bottom = new VBox(2);
         bottom.setPadding(new Insets(5));
         lblCurrentAction = new Label("Executing...");
@@ -238,7 +238,7 @@ public class MainApp extends Application {
         );
 
         engine.start();
-        updateGameUI(); // Primeira atualização
+        updateGameUI(); //primeira atualização
 
         window.setScene(new Scene(root, 800, 600));
         window.setOnCloseRequest(e -> {
