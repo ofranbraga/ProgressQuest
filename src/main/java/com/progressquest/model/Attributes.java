@@ -5,12 +5,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class Attributes {
-    private int strength;
-    private int dexterity;
-    private int intelligence;
-    private int stamina;
-    private int charisma;
-
     private final Map<String, Integer> stats;
     private final Random rand = new Random();
 
@@ -40,19 +34,15 @@ public class Attributes {
 
     public void decrement(String key) {
         int val = stats.getOrDefault(key, 0);
-        if (val > 0) {
-            stats.put(key, val - 1);
-        }
+        if (val > 0) stats.put(key, val - 1);
     }
 
     public void roll() {
         for (String key : stats.keySet()) {
-            // Rola 3 a 18
             stats.put(key, 3 + rand.nextInt(16));
         }
     }
 
-    //mantive para caso seja utilizado em algum npc no futuro
     public void increaseRandom() {
         String[] keys = stats.keySet().toArray(new String[0]);
         String key = keys[rand.nextInt(keys.length)];
