@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class Attributes {
+public class Attributes {   
     private final Map<String, Integer> stats;
     private final Random rand = new Random();
 
