@@ -22,21 +22,25 @@ public class Attributes {
         stats.put("CHA", 0);
     }
 
+    //define os atributos base
     public void setAll(int value) {
         for (String key : stats.keySet()) {
             stats.put(key, value);
         }
     }
 
+    //aumenta um atributo específico
     public void increment(String key) {
         stats.put(key, stats.getOrDefault(key, 0) + 1);
     }
 
+    //diminui um atributo específico
     public void decrement(String key) {
         int val = stats.getOrDefault(key, 0);
         if (val > 0) stats.put(key, val - 1);
     }
 
+    //vai rolar os atributos
     public void roll() {
         for (String key : stats.keySet()) {
             stats.put(key, 3 + rand.nextInt(16));
