@@ -11,16 +11,18 @@ public class Character {
     private String clazz;
     private int level;
     private long experience;
+    private int attributePoints;
 
-    //PONTOS DE ATRIBUTO
-    private int attributePoints; // Pontos livres para gastar
-
-    //status de Combate
+    //status de combate
     private int hpMax;
     private int hpCurrent;
     private int mpMax;
     private int mpCurrent;
     private String currentMap;
+
+    //fisica 2D
+    private double x, y; //posição no 2D
+    private double speed; //velocidade de movimento
 
     private final Attributes attributes;
     private final List<Item> inventory;
@@ -36,10 +38,15 @@ public class Character {
         this.spellBook = new ArrayList<>();
         this.level = 1;
         this.experience = 0;
-        this.attributePoints = 0; //começa zerado (distribuído na criação)
+        this.attributePoints = 0;
         this.currentMap = "Green Fields";
-        recalcStats();
 
+        //posição inicial no mundo 2D
+        this.x = 400;
+        this.y = 300;
+        this.speed = 3.0;
+
+        recalcStats();
         this.hpCurrent = this.hpMax;
         this.mpCurrent = this.mpMax;
     }
@@ -53,23 +60,19 @@ public class Character {
     public void recalcStats() {
         this.hpMax = 20 + (attributes.get("CON") * 3) + (level * 10);
         this.mpMax = 10 + (attributes.get("INT") * 2) + (attributes.get("WIS") * 2) + (level * 5);
+        //velocidade baseada em Destreza
+        this.speed = 2.0 + (attributes.get("DEX") * 0.1);
 
         if (hpCurrent > hpMax) hpCurrent = hpMax;
         if (mpCurrent > mpMax) mpCurrent = mpMax;
     }
 
-    //MÉTODOS PARA GASTAR PONTOS
-    public boolean spendAttributePoint(String attrName) {
-        if (attributePoints > 0) {
-            attributes.increment(attrName);
-            attributePoints--;
-            recalcStats(); //recalcula HP/MP pois CON/INT podem ter mudado
-            return true;
-        }
-        return false;
+    //movimento
+    public void move(double dx, double dy) {
+        this.x += dx * speed;
+        this.y += dy * speed;
     }
 
-    //COMBATE
     public void takeDamage(int dmg) {
         this.hpCurrent -= dmg;
         if (this.hpCurrent < 0) this.hpCurrent = 0;
@@ -106,11 +109,8 @@ public class Character {
     private void levelUp() {
         this.experience -= xpToNextLevel();
         this.level++;
-
         this.attributePoints += 3;
-
         recalcStats();
-        //cura total no level up
         this.hpCurrent = this.hpMax;
         this.mpCurrent = this.mpMax;
     }
@@ -125,6 +125,16 @@ public class Character {
         }
     }
 
+    public boolean spendAttributePoint(String attrName) {
+        if (attributePoints > 0) {
+            attributes.increment(attrName);
+            attributePoints--;
+            recalcStats();
+            return true;
+        }
+        return false;
+    }
+
     public void learnSpell(String spell) {
         if (!spellBook.contains(spell)) spellBook.add(spell);
     }
@@ -135,20 +145,20 @@ public class Character {
     public int getLevel() { return level; }
     public long getExperience() { return experience; }
     public Attributes getAttributes() { return attributes; }
-    public int getAttributePoints() { return attributePoints; } // Novo Getter
-
+    public int getAttributePoints() { return attributePoints; }
     public int getHpMax() { return hpMax; }
     public int getHpCurrent() { return hpCurrent; }
     public int getMpMax() { return mpMax; }
     public int getMpCurrent() { return mpCurrent; }
-
     public String getCurrentMap() { return currentMap; }
     public void setCurrentMap(String map) { this.currentMap = map; }
-
     public List<Item> getInventory() { return inventory; }
     public Map<Item.Slot, Item> getEquipment() { return equipment; }
     public List<String> getSpellBook() { return spellBook; }
-
     public Quest getCurrentQuest() { return currentQuest; }
     public void setCurrentQuest(Quest q) { this.currentQuest = q; }
+
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public void setPosition(double x, double y) { this.x = x; this.y = y; }
 }
