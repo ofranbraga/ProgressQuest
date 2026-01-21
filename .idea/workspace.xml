@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e1d92519-5749-4a07-87ef-ef8cab3c9502" name="Changes" comment="alterações feitas no MainApp.java e finalizada a atualização para que os atributos sejam interativos, dessa forma, o jogador pode ganhar e distribuir os pontos de atributos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/data/GameData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/data/GameData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Attributes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Attributes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Character.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Character.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Monster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Monster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UMLs/ProgressQuestUMLMMD.mmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UMLs/ProgressQuestUMLPNG.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UMLs/ProgressQuestUMLSVG.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +31,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ofranbraga/ProgressQuest.git&quot;,
-    &quot;accountId&quot;: &quot;46d6ef83-6588-4d05-9b20-3ff118abc47a&quot;
+    &quot;accountId&quot;: &quot;45d02e3d-082b-4c5d-af1c-6b9d4465ea9f&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -66,7 +63,7 @@
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/franc/OneDrive/Documents/UFPA/2025.4/Prog 2/ProgressQuest&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ofranbraga/Documentos/trabalho-pratico-sonora-main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
