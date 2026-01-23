@@ -45,6 +45,9 @@ public class AdventureMode {
     private Label lblNotification;
     private InventoryOverlay inventoryOverlay;
     private StatusOverlay statusOverlay;
+    private Label lblGold;
+    private Label lblPlayerSpeed; // nova label para mostrar deslocamento do jogador por frame
+    private Label lblMonsterSpeed; // nova label para mostrar deslocamento médio dos monstros por frame
 
     public AdventureMode(Stage stage, Character character, Runnable onExit) {
         this.stage = stage;
@@ -81,7 +84,19 @@ public class AdventureMode {
         pb2DMP = new ProgressBar(1.0); pb2DMP.setStyle("-fx-accent: blue;"); pb2DMP.setPrefWidth(150);
         pb2DXP = new ProgressBar(0.0); pb2DXP.setStyle("-fx-accent: green;"); pb2DXP.setPrefWidth(300); pb2DXP.setMaxWidth(Double.MAX_VALUE); HBox.setHgrow(pb2DXP, Priority.ALWAYS);
 
-        barsBox.getChildren().addAll(new Label("HP"), pb2DHP, new Label("MP"), pb2DMP, new Label("XP"), pb2DXP);
+        lblGold = new Label("Gold: " + character.getGold());
+        lblGold.setTextFill(Color.GOLD);
+        lblGold.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
+        lblPlayerSpeed = new Label("P: 0.0");
+        lblPlayerSpeed.setTextFill(Color.LIGHTGRAY);
+        lblPlayerSpeed.setFont(Font.font("Arial", 12));
+
+        lblMonsterSpeed = new Label("M: 0.0");
+        lblMonsterSpeed.setTextFill(Color.LIGHTGRAY);
+        lblMonsterSpeed.setFont(Font.font("Arial", 12));
+
+        barsBox.getChildren().addAll(new Label("HP"), pb2DHP, new Label("MP"), pb2DMP, new Label("XP"), pb2DXP, lblGold, lblPlayerSpeed, lblMonsterSpeed);
         hud.getChildren().addAll(infoBox, barsBox);
         gameLayout.setBottom(hud);
 
@@ -174,6 +189,9 @@ public class AdventureMode {
         pb2DHP.setProgress((double)character.getHpCurrent() / character.getHpMax());
         pb2DMP.setProgress((double)character.getMpCurrent() / character.getMpMax());
         pb2DXP.setProgress((double)character.getExperience() / character.xpToNextLevel());
+        lblGold.setText("Gold: " + character.getGold());
+        // atualiza labels de speed (valores atualizados durante update2DGame)
+        // (mantemos os valores já definidos em update2DGame)
     }
 
     private void showNotification(String msg) {
@@ -214,8 +232,13 @@ public class AdventureMode {
         if (activeKeys.contains(KeyCode.S)) dy += 1;
         if (activeKeys.contains(KeyCode.A)) dx -= 1;
         if (activeKeys.contains(KeyCode.D)) dx += 1;
-        if (dx != 0 && dy != 0) { dx *= 0.707; dy *= 0.707; }
+
+        // measure player movement
+        double prevPx = character.getX();
+        double prevPy = character.getY();
         character.move(dx, dy);
+        double playerMoved = getDistance(prevPx, prevPy, character.getX(), character.getY());
+        lblPlayerSpeed.setText(String.format("P: %.2f", playerMoved));
 
         //limites
         if (character.getX() < 0) character.setPosition(0, character.getY());
@@ -256,9 +279,16 @@ public class AdventureMode {
 
         //monstros e drops
         Iterator<Monster> it = activeMonsters.iterator();
+        double totalMonsterMoved = 0.0;
+        int movedCount = 0;
         while (it.hasNext()) {
             Monster m = it.next();
+            double prevMx = m.getX();
+            double prevMy = m.getY();
             m.moveTowards(character.getX(), character.getY(), 1.0);
+            double moved = getDistance(prevMx, prevMy, m.getX(), m.getY());
+            totalMonsterMoved += moved;
+            movedCount++;
 
             if (getDistance(character.getX(), character.getY(), m.getX(), m.getY()) < 30) {
                 character.takeDamage(1);
@@ -266,6 +296,12 @@ public class AdventureMode {
 
             if (m.isDead()) {
                 character.gainExperience(m.getRewardXP());
+                // dar gold do monstro
+                long mg = m.getGoldReward();
+                if (mg > 0) {
+                    character.addGold(mg);
+                    showNotification("Found " + mg + " gold!");
+                }
                 if (rand.nextDouble() < 0.3) {
                     Item item = generateLoot();
                     character.getInventory().add(item);
@@ -279,6 +315,8 @@ public class AdventureMode {
                 it.remove();
             }
         }
+        double avgMonsterMoved = movedCount > 0 ? (totalMonsterMoved / movedCount) : 0.0;
+        lblMonsterSpeed.setText(String.format("M: %.2f", avgMonsterMoved));
         spawn2DMonsters();
     }
 
@@ -346,3 +384,4 @@ public class AdventureMode {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }
+

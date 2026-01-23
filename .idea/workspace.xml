@@ -6,14 +6,23 @@
   <component name="ChangeListManager">
     <list default="true" id="e1d92519-5749-4a07-87ef-ef8cab3c9502" name="Changes" comment="alterações feitas no MainApp.java e finalizada a atualização para que os atributos sejam interativos, dessa forma, o jogador pode ganhar e distribuir os pontos de atributos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UMLs/ProgressQuestUMLMMD.mmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UMLs/ProgressQuestUMLPNG.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UMLs/ProgressQuestUMLSVG.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/engine/GameEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Character.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Character.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Monster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Monster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Quest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/model/Quest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/AdventureMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/AdventureMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/CreationScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/CreationScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/StatusOverlay.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/progressquest/ui/StatusOverlay.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/home/ofranbraga/Documentos/UFPA/2025.4/Prog2/ProgressQuest" value="35vSGRswmpxwojZx2xLEKdc7GeV" />
+    </persistenceIdMap>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -347,5 +356,13 @@
     <MESSAGE value="feat: alterando o arquivo Character.java para receber adição de pontos de atributos de forma manual." />
     <MESSAGE value="alterações feitas no MainApp.java e finalizada a atualização para que os atributos sejam interativos, dessa forma, o jogador pode ganhar e distribuir os pontos de atributos" />
     <option name="LAST_COMMIT_MESSAGE" value="alterações feitas no MainApp.java e finalizada a atualização para que os atributos sejam interativos, dessa forma, o jogador pode ganhar e distribuir os pontos de atributos" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>

@@ -14,6 +14,7 @@ public class StatusOverlay extends VBox {
     private final Runnable onClose;
     private Label lblStatusPoints;
     private VBox statusRowsContainer;
+    private Label lblGold;
 
     public StatusOverlay(Character character, Runnable onClose) {
         this.character = character;
@@ -34,17 +35,22 @@ public class StatusOverlay extends VBox {
         lblStatusPoints = new Label();
         lblStatusPoints.setTextFill(Color.CYAN);
 
+        lblGold = new Label();
+        lblGold.setTextFill(Color.GOLD);
+
         statusRowsContainer = new VBox(5);
 
         Button btnClose = new Button("Resume Game");
         btnClose.setOnAction(e -> onClose.run());
 
-        this.getChildren().addAll(lblTitle, lblStatusPoints, statusRowsContainer, btnClose);
+        this.getChildren().addAll(lblTitle, lblStatusPoints, lblGold, statusRowsContainer, btnClose);
     }
 
     public void refresh() {
         int points = character.getAttributePoints();
         lblStatusPoints.setText("Points Available: " + points);
+
+        lblGold.setText("Gold: " + character.getGold());
 
         statusRowsContainer.getChildren().clear();
         character.getAttributes().getAll().forEach((key, val) -> {

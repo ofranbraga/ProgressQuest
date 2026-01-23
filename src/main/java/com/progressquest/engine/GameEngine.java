@@ -139,6 +139,13 @@ public class GameEngine {
         log("You killed " + currentMonster.getName() + "!");
         hero.gainExperience(currentMonster.getRewardXP());
 
+        // dar gold ao jogador
+        long gold = currentMonster.getGoldReward();
+        if (gold > 0) {
+            hero.addGold(gold);
+            log("You found " + gold + " gold on the corpse.");
+        }
+
         checkQuestProgress(currentMonster.getName());
 
         if (rand.nextDouble() < 0.3) {
@@ -155,7 +162,8 @@ public class GameEngine {
             //nova quest
             String target = GameData.generateQuestTarget();
             int amount = 3 + rand.nextInt(3);
-            Quest q = new Quest(GameData.generateQuestTitle(target), "Hunt them down", amount, 100 * hero.getLevel(), null);
+            long rewardGold = 10L * hero.getLevel() + rand.nextInt(21); // 0-20 random
+            Quest q = new Quest(GameData.generateQuestTitle(target), "Hunt them down", amount, 100 * hero.getLevel(), null, rewardGold);
             hero.setCurrentQuest(q);
             log("ACCEPTED QUEST: " + q.getTitle() + ". Find them!");
         } else {
@@ -167,6 +175,11 @@ public class GameEngine {
                 if (hero.getCurrentQuest().isCompleted()) {
                     log("QUEST COMPLETED!");
                     hero.gainExperience(hero.getCurrentQuest().getRewardXP());
+                    long qGold = hero.getCurrentQuest().getRewardGold();
+                    if (qGold > 0) {
+                        hero.addGold(qGold);
+                        log("You received " + qGold + " gold as quest reward.");
+                    }
                     hero.setCurrentQuest(null);
                 }
             }
@@ -190,3 +203,4 @@ public class GameEngine {
     public String getCurrentAction() { return currentAction; }
     public Monster getCurrentMonster() { return currentMonster; }
 }
+

@@ -31,6 +31,9 @@ public class Character {
 
     private Quest currentQuest;
 
+    // ouro do jogador
+    private long gold;
+
     public Character(Attributes attrs) {
         this.attributes = attrs;
         this.inventory = new ArrayList<>();
@@ -45,6 +48,9 @@ public class Character {
         this.x = 400;
         this.y = 300;
         this.speed = 3.0;
+
+        // ouro inicial
+        this.gold = 0L;
 
         recalcStats();
         this.hpCurrent = this.hpMax;
@@ -69,8 +75,15 @@ public class Character {
 
     //movimento
     public void move(double dx, double dy) {
-        this.x += dx * speed;
-        this.y += dy * speed;
+        // normaliza o vetor para que movimento diagonal não seja mais rápido
+        if (dx == 0 && dy == 0) return;
+        double len = Math.sqrt(dx*dx + dy*dy);
+        if (len == 0) return;
+        double ndx = dx / len;
+        double ndy = dy / len;
+        double adjust = 1.7; // ajuste solicitado para padronizar velocidade diagonal
+        this.x += ndx * speed * adjust;
+        this.y += ndy * speed * adjust;
     }
 
     public void takeDamage(int dmg) {
@@ -161,4 +174,19 @@ public class Character {
     public double getX() { return x; }
     public double getY() { return y; }
     public void setPosition(double x, double y) { this.x = x; this.y = y; }
+
+    // gold management
+    public long getGold() { return gold; }
+    public void addGold(long amount) {
+        if (amount <= 0) return;
+        this.gold += amount;
+    }
+    public boolean spendGold(long amount) {
+        if (amount <= 0) return true;
+        if (this.gold >= amount) {
+            this.gold -= amount;
+            return true;
+        }
+        return false;
+    }
 }

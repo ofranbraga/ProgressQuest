@@ -13,6 +13,9 @@ public class Monster {
 
     private double x, y;
 
+    // recompensa em ouro
+    private final long goldReward;
+
     public Monster(String name, int level) {
         this.name = name;
         this.level = level;
@@ -25,6 +28,9 @@ public class Monster {
         //posição aleatória inicial (vai ser sobrescrita pelo spawn)
         this.x = 0;
         this.y = 0;
+
+        // gold reward baseado no level com pequena variação
+        this.goldReward = 5L * level + new Random().nextInt(6); // 0-5 extra
     }
 
     //spawn aleatorio de monstros
@@ -51,15 +57,18 @@ public class Monster {
     public double getX() { return x; }
     public double getY() { return y; }
 
+    public long getGoldReward() { return goldReward; }
+
     //ia bem basiquinha de monstros para q eles vao ate o player
     public void moveTowards(double targetX, double targetY, double speed) {
         double dx = targetX - x;
         double dy = targetY - y;
-        double distance = Math.sqrt(dx*dx + dy*dy);
-
-        if (distance > 0) {
-            x += (dx / distance) * speed;
-            y += (dy / distance) * speed;
-        }
+        double len = Math.sqrt(dx*dx + dy*dy);
+        if (len == 0) return;
+        double ndx = dx / len;
+        double ndy = dy / len;
+        double adjust = 1.7;
+        this.x += ndx * speed * adjust;
+        this.y += ndy * speed * adjust;
     }
 }

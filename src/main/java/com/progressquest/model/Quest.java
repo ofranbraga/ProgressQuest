@@ -7,13 +7,15 @@ public class Quest {
     private int currentKills = 0;
     private final long rewardXP;
     private final Item rewardItem;
+    private final long rewardGold;
 
-    public Quest(String title, String description, int requiredKills, long rewardXP, Item rewardItem) {
+    public Quest(String title, String description, int requiredKills, long rewardXP, Item rewardItem, long rewardGold) {
         this.title = title;
         this.description = description;
         this.requiredKills = requiredKills;
         this.rewardXP = rewardXP;
         this.rewardItem = rewardItem;
+        this.rewardGold = rewardGold;
     }
 
     public void registerKill() { currentKills++; }
@@ -25,4 +27,5 @@ public class Quest {
     public Item getRewardItem() { return rewardItem; }
     public int getRequiredKills() { return requiredKills; }
     public int getCurrentKills() { return currentKills; }
+    public long getRewardGold() { return rewardGold; }
 }
