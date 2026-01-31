@@ -59,9 +59,9 @@ public class IdleMode {
         //coluna 2
         VBox col2 = new VBox(5); col2.setPadding(new Insets(5));
         VBox vitalBox = createPanel("Vitals");
-        pbHP = new ProgressBar(1.0); pbHP.setMaxWidth(Double.MAX_VALUE); pbHP.setStyle("-fx-accent: red;");
+        pbHP = new ProgressBar(1.0); pbHP.setMaxWidth(Double.MAX_VALUE); pbHP.getStyleClass().addAll("flask-bar", "hp-bar");
         lblHPText = new Label("HP: ?/?");
-        pbMP = new ProgressBar(1.0); pbMP.setMaxWidth(Double.MAX_VALUE); pbMP.setStyle("-fx-accent: blue;");
+        pbMP = new ProgressBar(1.0); pbMP.setMaxWidth(Double.MAX_VALUE); pbMP.getStyleClass().addAll("flask-bar", "mp-bar");
         lblMPText = new Label("MP: ?/?");
         vitalBox.getChildren().addAll(new Label("Health"), pbHP, lblHPText, new Label("Mana"), pbMP, lblMPText);
 
@@ -78,7 +78,7 @@ public class IdleMode {
 
         VBox logBox = createPanel("Adventure Log");
         combatLog = new TextArea();
-        combatLog.setEditable(false); combatLog.setWrapText(true);
+        combatLog.setEditable(false); combatLog.setWrapText(true); combatLog.getStyleClass().add("log-area");
         logBox.getChildren().add(combatLog);
         VBox.setVgrow(logBox, Priority.ALWAYS); VBox.setVgrow(combatLog, Priority.ALWAYS);
         col2.getChildren().addAll(vitalBox, combatBox, logBox);
@@ -126,16 +126,17 @@ public class IdleMode {
         updateIdleUI();
 
         Scene scene = new Scene(root, 900, 700);
+        scene.getStylesheets().add(getClass().getResource("/styles/medieval.css").toExternalForm());
+
         stage.setOnCloseRequest(e -> { idleEngine.stop(); Platform.exit(); System.exit(0); });
         stage.setScene(scene);
     }
 
     private VBox createPanel(String title) {
         VBox box = new VBox(2);
-        box.setStyle("-fx-border-color: gray; -fx-border-width: 1; -fx-background-color: #f4f4f4;");
+        box.getStyleClass().add("game-panel");
         Label lbl = new Label(title);
-        lbl.setFont(Font.font("System", FontWeight.BOLD, 12));
-        lbl.setStyle("-fx-background-color: #ddd; -fx-padding: 2;");
+        lbl.getStyleClass().add("panel-header");
         lbl.setMaxWidth(Double.MAX_VALUE);
         box.getChildren().add(lbl);
         return box;

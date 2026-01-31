@@ -100,7 +100,12 @@ public class CreationScreen {
         centerGrid.getColumnConstraints().addAll(col, col, col);
 
         root.setCenter(centerGrid);
-        stage.setScene(new Scene(root, 750, 550));
+        
+        Scene scene = new Scene(root, 750, 550);
+        
+        scene.getStylesheets().add(getClass().getResource("/styles/medieval.css").toExternalForm());
+
+        stage.setScene(scene);
     }
 
     private boolean validateCreation(ToggleGroup raceGroup, ToggleGroup classGroup, TextField tfName) {

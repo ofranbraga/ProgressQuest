@@ -1,0 +1,231 @@
+/* --- CONFIGURAÇÕES GERAIS --- */
+.root {
+    /* Fundo geral escuro (pedra/masmorra) */
+    -fx-background-color: #1a1a1a;
+    /* Fonte serifada para estilo antigo */
+    -fx-font-family: "Georgia", "Times New Roman", serif;
+    /* Cor de texto padrão (creme/pergaminho) */
+    -fx-text-fill: #e8dcc5;
+}
+
+/* --- BOTÕES (Estilo Madeira) --- */
+.button {
+    /* Gradiente para simular madeira */
+    -fx-background-color: linear-gradient(to bottom, #8B4513, #5D2906);
+    -fx-background-radius: 5;
+    -fx-border-color: #3e2723;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-text-fill: #ffd700; /* Texto Dourado */
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 1);
+}
+
+.button:hover {
+    /* Clareia um pouco ao passar o mouse */
+    -fx-background-color: linear-gradient(to bottom, #A0522D, #8B4513);
+    -fx-border-color: #ffd700; /* Borda brilha em ouro */
+}
+
+.button:pressed {
+    -fx-background-color: #3e1b03;
+    -fx-effect: inner-shadow(three-pass-box, rgba(0,0,0,0.7), 5, 0, 0, 0);
+}
+
+.button:disabled {
+    -fx-opacity: 0.6;
+    -fx-background-color: #555;
+    -fx-text-fill: #aaa;
+}
+
+/* --- LABELS E TEXTOS --- */
+.label {
+    -fx-text-fill: #e8dcc5;
+    -fx-font-size: 13px;
+}
+
+/* Títulos ou labels importantes (use id ou style class específica no Java se quiser diferenciar) */
+.label-header {
+    -fx-text-fill: #ffd700;
+    -fx-font-size: 18px;
+    -fx-effect: dropshadow(one-pass-box, black, 2, 0.5, 0, 0);
+}
+
+/* --- CAMPOS DE TEXTO E ÁREAS (Estilo Pergaminho) --- */
+.text-field, .text-area {
+    -fx-background-color: #fcf5e5; /* Cor de papel envelhecido */
+    -fx-text-fill: #2b1b17; /* Tinta escura */
+    -fx-prompt-text-fill: #8b7d6b;
+    -fx-border-color: #5d4037;
+    -fx-border-width: 2;
+    -fx-background-radius: 3;
+    -fx-border-radius: 3;
+}
+
+/* --- LIST VIEW (Inventário/Equipamento) --- */
+.list-view {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #8B4513;
+    -fx-border-width: 3;
+}
+
+.list-cell {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e8dcc5;
+    -fx-padding: 5;
+    -fx-border-color: transparent transparent #444 transparent;
+}
+
+.list-cell:filled:selected, .list-cell:filled:selected:hover {
+    -fx-background-color: #5D2906; /* Seleção cor de madeira escura */
+    -fx-text-fill: #ffd700;
+    -fx-border-color: #ffd700;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #333;
+}
+
+/* --- BARRAS DE PROGRESSO (HP, MP, XP) --- */
+.progress-bar {
+    -fx-pref-height: 18;
+    -fx-border-color: #333;
+    -fx-border-width: 1;
+    -fx-background-radius: 4;
+}
+
+.progress-bar .track {
+    -fx-background-color: #1a1a1a; /* Fundo da barra escuro */
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+/* Estilização específica para as barras baseado na cor de accent definida no Java */
+.progress-bar .bar {
+    -fx-background-insets: 1;
+    -fx-background-radius: 4;
+    -fx-effect: inner-shadow(two-pass-box, rgba(0,0,0,0.3), 5, 0, 0, -1);
+}
+
+/* --- SCROLL PANES & BARS --- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: #1a1a1a;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #8B4513;
+    -fx-background-radius: 0;
+    -fx-border-color: #5d4037;
+}
+
+/* --- SEPARADORES --- */
+.separator *.line {
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-color: #5d4037;
+    -fx-background-color: null;
+}
+
+/* --- RADIO BUTTONS (Criação de Personagem) --- */
+.radio-button {
+    -fx-text-fill: #e8dcc5;
+}
+
+.radio-button .radio {
+    -fx-background-color: #fcf5e5;
+    -fx-border-color: #5d4037;
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: #8B4513;
+}
+
+/* --- PAINÉIS DO JOGO (MODO IDLE) --- */
+.game-panel {
+    -fx-border-color: #5d4037; /* Borda marrom */
+    -fx-border-width: 2;
+    -fx-background-color: rgba(30, 30, 30, 0.8); /* Fundo escuro semitransparente */
+    -fx-padding: 5;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.panel-header {
+    -fx-background-color: linear-gradient(to right, #5d4037, #3e2723); /* Degradê marrom */
+    -fx-text-fill: #ffd700; /* Texto Dourado */
+    -fx-padding: 4 8 4 8;
+    -fx-font-weight: bold;
+    -fx-background-radius: 3 3 0 0;
+    -fx-border-color: #3e2723;
+    -fx-border-width: 0 0 2 0; /* Linha sutil abaixo do título */
+}
+
+/* Notificações e Logs */
+.text-area.log-area {
+    -fx-font-family: "Consolas", "Monospace";
+    -fx-font-size: 11px;
+    -fx-background-color: #111;
+    -fx-control-inner-background: #111; /* Necessário para mudar o fundo interno da TextArea */
+    -fx-text-fill: #00ff00; /* Texto estilo terminal retrô ou verde mágico */
+    -fx-border-color: #333;
+}
+
+/* --- BARRAS ESTILO FRASCO DE VIDRO (HP & MP) --- */
+
+/* Classe base para o formato do frasco */
+.flask-bar {
+    -fx-pref-height: 24px; /* Um pouco mais grossa para parecer um frasco */
+    -fx-background-color: transparent; /* Remove fundo padrão */
+    -fx-padding: 0; /* Garante que o track ocupe tudo */
+}
+
+/* O "Vidro" (Fundo da barra) */
+.flask-bar .track {
+    -fx-background-color: rgba(20, 20, 20, 0.6); /* Fundo escuro vazio */
+    -fx-background-radius: 15; /* Bordas bem arredondadas (tubo) */
+    
+    /* Borda simulando o vidro */
+    -fx-border-color: rgba(200, 200, 200, 0.5) rgba(150, 150, 150, 0.3) rgba(100, 100, 100, 0.3) rgba(200, 200, 200, 0.5);
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    
+    /* Sombra interna para profundidade */
+    -fx-effect: inner-shadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);
+}
+
+/* O "Líquido" dentro do frasco */
+.flask-bar .bar {
+    -fx-background-radius: 15;
+    -fx-background-insets: 3; /* O líquido fica "dentro" da parede de vidro (borda) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 2, 0, 0, 0); /* Leve sombra do líquido */
+}
+
+/* --- LÍQUIDO DE VIDA (HP) --- */
+.hp-bar .bar {
+    -fx-background-color: 
+        /* Camada 1: Brilho de vidro no topo (reflexo) */
+        linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 20%, transparent 100%),
+        /* Camada 2: Cor vermelha com gradiente cilíndrico (escuro-claro-escuro) */
+        linear-gradient(to bottom, #8B0000 0%, #FF3333 50%, #500000 100%);
+}
+
+/* --- LÍQUIDO DE MANA (MP) --- */
+.mp-bar .bar {
+    -fx-background-color: 
+        /* Camada 1: Reflexo */
+        linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 20%, transparent 100%),
+        /* Camada 2: Cor azul cilíndrica */
+        linear-gradient(to bottom, #00008B 0%, #3366FF 50%, #000050 100%);
+}

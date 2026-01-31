@@ -80,8 +80,8 @@ public class AdventureMode {
         HBox barsBox = new HBox(10);
         barsBox.setAlignment(Pos.CENTER_LEFT);
 
-        pb2DHP = new ProgressBar(1.0); pb2DHP.setStyle("-fx-accent: red;"); pb2DHP.setPrefWidth(150);
-        pb2DMP = new ProgressBar(1.0); pb2DMP.setStyle("-fx-accent: blue;"); pb2DMP.setPrefWidth(150);
+        pb2DHP = new ProgressBar(1.0); pb2DHP.getStyleClass().addAll("flask-bar", "hp-bar");; pb2DHP.setPrefWidth(150);
+        pb2DMP = new ProgressBar(1.0); pb2DMP.getStyleClass().addAll("flask-bar", "mp-bar"); pb2DMP.setPrefWidth(150);
         pb2DXP = new ProgressBar(0.0); pb2DXP.setStyle("-fx-accent: green;"); pb2DXP.setPrefWidth(300); pb2DXP.setMaxWidth(Double.MAX_VALUE); HBox.setHgrow(pb2DXP, Priority.ALWAYS);
 
         lblGold = new Label("Gold: " + character.getGold());
@@ -115,6 +115,8 @@ public class AdventureMode {
 
         Scene scene = new Scene(root, 800, 680);
 
+        scene.getStylesheets().add(getClass().getResource("/styles/medieval.css").toExternalForm());
+        
         // Inputs
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.I) toggleInventory();
