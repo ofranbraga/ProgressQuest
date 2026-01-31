@@ -229,3 +229,19 @@
         /* Camada 2: Cor azul cilíndrica */
         linear-gradient(to bottom, #00008B 0%, #3366FF 50%, #000050 100%);
 }
+
+.exp-bar .bar {
+    -fx-background-color: 
+        /* Camada 1: Reflexo */
+        linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 20%, transparent 100%),
+        /* Camada 2: Cor azul cilíndrica */
+        linear-gradient(to bottom, #1c8b00 0%, #85ff33 50%, #005008 100%);
+}
+
+.action-bar .bar {
+    -fx-background-color: 
+        /* Camada 1: Reflexo */
+        linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 20%, transparent 100%),
+        /* Camada 2: Cor azul cilíndrica */
+        linear-gradient(to bottom, #008b82 0%, #33ffd3 50%, #002f50 100%);
+}

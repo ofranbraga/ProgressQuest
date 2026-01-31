@@ -109,11 +109,11 @@ public class IdleMode {
 
         VBox bottom = new VBox(2); bottom.setPadding(new Insets(5));
         lblCurrentAction = new Label("Starting...");
-        pbAction = new ProgressBar(0); pbAction.setMaxWidth(Double.MAX_VALUE);
+        pbAction = new ProgressBar(0); pbAction.setMaxWidth(Double.MAX_VALUE); pbAction.getStyleClass().addAll("flask-bar", "action-bar");
         HBox xpBox = new HBox(5);
         Label lblXp = new Label("XP:");
         pbExp = new ProgressBar(0); pbExp.setMaxWidth(Double.MAX_VALUE); HBox.setHgrow(pbExp, Priority.ALWAYS);
-        pbExp.setStyle("-fx-accent: green;");
+        pbExp.getStyleClass().addAll("flask-bar", "exp-bar");
         xpBox.getChildren().addAll(lblXp, pbExp);
         bottom.getChildren().addAll(lblCurrentAction, pbAction, xpBox);
         root.setBottom(bottom);
