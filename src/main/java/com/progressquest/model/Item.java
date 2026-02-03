@@ -4,7 +4,9 @@ public class Item {
 
     public enum Slot {
         WEAPON, SHIELD, HELM, HAUBERK, BRASSAIRTS, VAMBRACES,
-        GAUNTLETS, GAMBESON, CUISSES, GREAVES, SOLLERETS
+        GAUNTLETS, GAMBESON, CUISSES, GREAVES, SOLLERETS,
+        // Non-equippable slot used for consumables stored in the same inventory list.
+        POTION
     }
 
     private final String name;

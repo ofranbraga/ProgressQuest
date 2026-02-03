@@ -2,73 +2,33 @@ package com.progressquest.model;
 
 import java.util.Random;
 
-public class Monster {
-    private final String name;
-    private final int level;
+/**
+ * A combat opponent in Idle mode.
+ *
+ * <p>2D spawn and pathing logic were removed.</p>
+ */
+public class Monster extends Entity {
     private final long rewardXP;
-
-    private int maxHp;
-    private int currentHp;
     private int damage;
-
-    private double x, y;
-
-    // recompensa em ouro
     private final long goldReward;
 
     public Monster(String name, int level) {
-        this.name = name;
-        this.level = level;
+        super(name, level);
         this.rewardXP = 20L * level;
 
-        this.maxHp = 15 + (level * 5);
-        this.currentHp = this.maxHp;
+        this.hpMax = 15 + (level * 5);
+        this.hpCurrent = this.hpMax;
         this.damage = 2 + (level * 2);
 
-        //posição aleatória inicial (vai ser sobrescrita pelo spawn)
-        this.x = 0;
-        this.y = 0;
-
-        // gold reward baseado no level com pequena variação
         this.goldReward = 5L * level + new Random().nextInt(6); // 0-5 extra
     }
 
-    //spawn aleatorio de monstros
-    public void spawnRandomly(int screenWidth, int screenHeight) {
-        Random r = new Random();
-        this.x = r.nextInt(screenWidth - 50);
-        this.y = r.nextInt(screenHeight - 50);
-    }
-
-    public void takeDamage(int dmg) {
-        this.currentHp -= dmg;
-        if (this.currentHp < 0) this.currentHp = 0;
-    }
-
-    public boolean isDead() { return currentHp <= 0; }
-
-    public String getName() { return name; }
-    public int getLevel() { return level; }
     public long getRewardXP() { return rewardXP; }
-    public int getMaxHp() { return maxHp; }
-    public int getCurrentHp() { return currentHp; }
+
+    // Mantidos por compatibilidade com UI (IdleMode)
+    public int getMaxHp() { return hpMax; }
+    public int getCurrentHp() { return hpCurrent; }
+
     public int getDamage() { return damage; }
-
-    public double getX() { return x; }
-    public double getY() { return y; }
-
     public long getGoldReward() { return goldReward; }
-
-    //ia bem basiquinha de monstros para q eles vao ate o player
-    public void moveTowards(double targetX, double targetY, double speed) {
-        double dx = targetX - x;
-        double dy = targetY - y;
-        double len = Math.sqrt(dx*dx + dy*dy);
-        if (len == 0) return;
-        double ndx = dx / len;
-        double ndy = dy / len;
-        double adjust = 1.7;
-        this.x += ndx * speed * adjust;
-        this.y += ndy * speed * adjust;
-    }
 }
