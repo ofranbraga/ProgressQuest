@@ -12,6 +12,8 @@ import javafx.scene.text.Font;
 public class StatusOverlay extends VBox {
     private final Character character;
     private final Runnable onClose;
+    private Label lblHeader;
+    private Label lblVitals;
     private Label lblStatusPoints;
     private VBox statusRowsContainer;
     private Label lblGold;
@@ -32,6 +34,13 @@ public class StatusOverlay extends VBox {
         Label lblTitle = new Label("CHARACTER STATUS");
         lblTitle.setTextFill(Color.WHITE); lblTitle.setFont(Font.font(20));
 
+        lblHeader = new Label();
+        lblHeader.setTextFill(Color.WHITE);
+        lblHeader.setFont(Font.font(14));
+
+        lblVitals = new Label();
+        lblVitals.setTextFill(Color.LIGHTGREEN);
+
         lblStatusPoints = new Label();
         lblStatusPoints.setTextFill(Color.CYAN);
 
@@ -43,10 +52,13 @@ public class StatusOverlay extends VBox {
         Button btnClose = new Button("Resume Game");
         btnClose.setOnAction(e -> onClose.run());
 
-        this.getChildren().addAll(lblTitle, lblStatusPoints, lblGold, statusRowsContainer, btnClose);
+        this.getChildren().addAll(lblTitle, lblHeader, lblVitals, lblStatusPoints, lblGold, statusRowsContainer, btnClose);
     }
 
     public void refresh() {
+        lblHeader.setText(character.getName() + " - " + character.getRace() + " " + character.getClazz() + " (Lvl " + character.getLevel() + ")");
+        lblVitals.setText("HP " + character.getHpCurrent() + "/" + character.getHpMax() + "   |   MP " + character.getMpCurrent() + "/" + character.getMpMax());
+
         int points = character.getAttributePoints();
         lblStatusPoints.setText("Points Available: " + points);
 

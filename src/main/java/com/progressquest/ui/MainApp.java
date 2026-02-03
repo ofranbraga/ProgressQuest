@@ -4,6 +4,12 @@ import com.progressquest.model.Character;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * Main JavaFX entry point.
+ *
+ * <p>The game runs only in Idle mode. After character creation,
+ * the game starts directly in IdleMode.</p>
+ */
 public class MainApp extends Application {
 
     private Stage window;
@@ -25,13 +31,13 @@ public class MainApp extends Application {
         creationScreen.show();
     }
 
-    private void startGame(Character character, Boolean is2DMode) {
-        if (is2DMode) {
-            AdventureMode adventure = new AdventureMode(window, character, this::showCreationScreen);
-            adventure.start();
-        } else {
-            IdleMode idle = new IdleMode(window, character, this::showCreationScreen);
-            idle.start();
-        }
+    private void startGame(Character character) {
+        startGame(character, Boolean.FALSE);
+    }
+
+    // Legacy creation callback signature (Character, is2D). is2D is ignored.
+    private void startGame(Character character, Boolean ignoredIs2D) {
+        IdleMode idle = new IdleMode(window, character, this::showCreationScreen);
+        idle.start();
     }
 }

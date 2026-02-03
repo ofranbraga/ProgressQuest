@@ -5,6 +5,8 @@ import com.progressquest.engine.GameEngine;
 import com.progressquest.model.Character;
 import com.progressquest.model.Item;
 import com.progressquest.model.Monster;
+import com.progressquest.model.damage.DamageStrategy;
+import com.progressquest.model.Potion;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,10 +26,12 @@ public class IdleMode {
 
     //componentes UI
     private Label lblName, lblRaceClass, lblLevel, lblUnspentPoints;
+    private Label lblGold;
     private ProgressBar pbHP, pbMP, pbExp, pbAction;
     private Label lblHPText, lblMPText, lblCurrentAction, lblTargetMonster;
     private TextArea combatLog;
     private ComboBox<String> mapSelector;
+    private Button btnShop;
     private ListView<String> listEquip, listInv, listSpells, listQuests;
     private VBox statsContainer;
 
@@ -47,8 +51,10 @@ public class IdleMode {
         lblName = new Label(); lblRaceClass = new Label(); lblLevel = new Label();
         lblUnspentPoints = new Label();
         lblUnspentPoints.setStyle("-fx-text-fill: blue; -fx-font-weight: bold;");
+        lblGold = new Label();
+        lblGold.setStyle("-fx-text-fill: goldenrod; -fx-font-weight: bold;");
         statsContainer = new VBox(2);
-        charSheet.getChildren().addAll(lblName, lblRaceClass, lblLevel, new Separator(), lblUnspentPoints, statsContainer);
+        charSheet.getChildren().addAll(lblName, lblRaceClass, lblLevel, lblGold, new Separator(), lblUnspentPoints, statsContainer);
         VBox spellBox = createPanel("Spell Book");
         listSpells = new ListView<>();
         spellBox.getChildren().add(listSpells);
@@ -71,10 +77,24 @@ public class IdleMode {
         mapSelector.setValue("Green Fields");
         mapSelector.setMaxWidth(Double.MAX_VALUE);
         mapSelector.setOnAction(e -> character.setCurrentMap(mapSelector.getValue()));
+
+        // Utility buttons (combat consumables / safe-zone shop)
+        HBox utilityRow = new HBox(5);
+        Button btnHpPotion = new Button("Use HP Potion");
+        Button btnMpPotion = new Button("Use MP Potion");
+        btnShop = new Button("Open Shop");
+
+        btnHpPotion.setOnAction(e -> idleEngine.requestPotionUse(Potion.Kind.HEALTH));
+        btnMpPotion.setOnAction(e -> idleEngine.requestPotionUse(Potion.Kind.MANA));
+        btnShop.setOnAction(e -> openShopWindow());
+        btnShop.setDisable(true);
+
+        utilityRow.getChildren().addAll(btnHpPotion, btnMpPotion, btnShop);
+        utilityRow.setAlignment(Pos.CENTER_LEFT);
         lblTargetMonster = new Label("Searching...");
         lblTargetMonster.setFont(Font.font("System", FontWeight.BOLD, 14));
         lblTargetMonster.setStyle("-fx-text-fill: darkred;");
-        combatBox.getChildren().addAll(new Label("Location:"), mapSelector, new Separator(), lblTargetMonster);
+        combatBox.getChildren().addAll(new Label("Location:"), mapSelector, utilityRow, new Separator(), lblTargetMonster);
 
         VBox logBox = createPanel("Adventure Log");
         combatLog = new TextArea();
@@ -146,6 +166,12 @@ public class IdleMode {
         lblName.setText(character.getName());
         lblRaceClass.setText(character.getRace() + " " + character.getClazz());
         lblLevel.setText("Level " + character.getLevel());
+        lblGold.setText("Gold: " + character.getGold());
+
+        // Safe-zone shop button only works in town.
+        if (btnShop != null) {
+            btnShop.setDisable(!GameData.SAFE_ZONE.equals(character.getCurrentMap()));
+        }
 
         int points = character.getAttributePoints();
         lblUnspentPoints.setText(points > 0 ? "POINTS AVAILABLE: " + points : "");
@@ -162,6 +188,16 @@ public class IdleMode {
             }
             statsContainer.getChildren().add(row);
         });
+
+        // Derived combat info (character sheet)
+        DamageStrategy strat = character.getDamageStrategy();
+        String dmgType = (strat != null) ? strat.typeLabel() : "Physical";
+        int manaCost = (strat != null) ? strat.manaCost(character) : 0;
+        int dmgVal = character.calculateDamage();
+        Label lblDmg = new Label("Damage (" + dmgType + "): " + dmgVal + (manaCost > 0 ? "  |  Cost: " + manaCost + " MP" : ""));
+        lblDmg.setStyle("-fx-font-weight: bold;");
+        statsContainer.getChildren().add(new Separator());
+        statsContainer.getChildren().add(lblDmg);
 
         double hpPerc = (double) character.getHpCurrent() / character.getHpMax();
         pbHP.setProgress(hpPerc);
@@ -186,5 +222,91 @@ public class IdleMode {
         if(character.getCurrentQuest() != null) {
             listQuests.getItems().add(character.getCurrentQuest().getTitle() + " (" + character.getCurrentQuest().getCurrentKills() + "/" + character.getCurrentQuest().getRequiredKills() + ")");
         }
+    }
+
+    /** Simple shop UI available only in the safe-zone map. */
+    private void openShopWindow() {
+        if (!GameData.SAFE_ZONE.equals(character.getCurrentMap())) {
+            return;
+        }
+
+        Stage shopStage = new Stage();
+        shopStage.setTitle("Shop - " + GameData.SAFE_ZONE);
+
+        VBox root = new VBox(8);
+        root.setPadding(new Insets(10));
+
+        Label lblWallet = new Label();
+        lblWallet.setStyle("-fx-font-weight: bold; -fx-text-fill: goldenrod;");
+
+        ListView<ShopEntry> list = new ListView<>();
+        list.getItems().addAll(
+                // Potions
+                new ShopEntry("Health Potion (+20% HP)", 30, () -> new Potion("Health Potion", Potion.Kind.HEALTH, 0.20, 30)),
+                new ShopEntry("Mana Potion (+20% MP)", 25, () -> new Potion("Mana Potion", Potion.Kind.MANA, 0.20, 25)),
+                // Basic equipment
+                new ShopEntry("Iron Sword (+2)", 60, () -> new Item("Iron Sword", Item.Slot.WEAPON, 2, "STR")),
+                new ShopEntry("Kite Shield (+2)", 55, () -> new Item("Kite Shield", Item.Slot.SHIELD, 2, "CON")),
+                new ShopEntry("Leather Hauberk (+2)", 70, () -> new Item("Leather Hauberk", Item.Slot.HAUBERK, 2, "CON")),
+                new ShopEntry("Steel Helm (+1)", 40, () -> new Item("Steel Helm", Item.Slot.HELM, 1, "CON"))
+        );
+
+        list.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(ShopEntry item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.label + " - " + item.price + " gold");
+                }
+            }
+        });
+
+        Button btnBuy = new Button("Buy");
+        btnBuy.setMaxWidth(Double.MAX_VALUE);
+        btnBuy.setOnAction(e -> {
+            ShopEntry sel = list.getSelectionModel().getSelectedItem();
+            if (sel == null) return;
+
+            if (!character.spendGold(sel.price)) {
+                combatLog.appendText("Not enough gold!\n");
+                return;
+            }
+
+            Item item = sel.factory.get();
+            if (item instanceof Potion) {
+                character.getInventory().add(item);
+            } else {
+                character.lootItem(item);
+            }
+            combatLog.appendText("Purchased: " + item.toString() + "\n");
+            updateIdleUI();
+        });
+
+        Runnable refreshWallet = () -> lblWallet.setText("Your Gold: " + character.getGold());
+        refreshWallet.run();
+
+        root.getChildren().addAll(new Label("Welcome to town!"), lblWallet, new Separator(), list, btnBuy);
+        VBox.setVgrow(list, Priority.ALWAYS);
+
+        Scene scene = new Scene(root, 360, 420);
+        scene.getStylesheets().add(getClass().getResource("/styles/medieval.css").toExternalForm());
+        shopStage.setScene(scene);
+        shopStage.initOwner(stage);
+        shopStage.show();
+    }
+
+    /** Tiny helper to represent a shop item. */
+    private static class ShopEntry {
+        final String label;
+        final long price;
+        final java.util.function.Supplier<Item> factory;
+        ShopEntry(String label, long price, java.util.function.Supplier<Item> factory) {
+            this.label = label;
+            this.price = price;
+            this.factory = factory;
+        }
+        @Override public String toString() { return label; }
     }
 }

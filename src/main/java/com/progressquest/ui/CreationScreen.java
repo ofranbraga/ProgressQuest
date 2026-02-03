@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 public class CreationScreen {
 
     private final Stage stage;
-    private final BiConsumer<Character, Boolean> onGameStart; //callback para voltar ao MainApp (Char, is2D)
+    private final BiConsumer<Character, Boolean> onGameStart; //callback para iniciar o jogo (Char, legacyFlag)
 
     private Character tempChar;
     private int creationPoints = 25;
