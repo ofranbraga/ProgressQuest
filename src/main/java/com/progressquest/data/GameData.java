@@ -3,6 +3,7 @@ package com.progressquest.data;
 import java.util.*;
 
 public class GameData {
+    public static final String SAFE_ZONE = "Safe Town";
     public static final List<String> RACES = Arrays.asList(
             "Half Orc", "Half Man", "Half Halfling", "Double Hobbit", "Hob-Hobbit",
             "Low Elf", "Dung Elf", "Talking Pony", "Gyrognome", "Lesser Dwarf",
@@ -26,6 +27,8 @@ public class GameData {
     //SISTEMA DE MAPAS E MONSTROS POR REGIÃO
     public static final Map<String, List<String>> MAPS = new LinkedHashMap<>();
     static {
+        // Safe zone: no monsters (handled by engine/state). Kept here so it appears in the map selector.
+        MAPS.put(SAFE_ZONE, Collections.emptyList());
         MAPS.put("Green Fields", Arrays.asList("Giant Rat", "Snake", "Wild Wolf", "Kobold"));
         MAPS.put("Dark Forest", Arrays.asList("Goblin", "Spider", "Bandit", "Orc"));
         MAPS.put("Deep Cave", Arrays.asList("Skeleton", "Bat", "Troll", "Slime"));
@@ -42,6 +45,9 @@ public class GameData {
 
     //pega um monstro aleatório do mapa onde o jogador está
     public static String getMonsterFromMap(String mapName) {
+        if (SAFE_ZONE.equals(mapName)) {
+            return null; // Safe zone has no monsters.
+        }
         List<String> mobs = MAPS.getOrDefault(mapName, MAPS.get("Green Fields"));
         return mobs.get(rand.nextInt(mobs.size()));
     }

@@ -1,8 +1,11 @@
 package com.progressquest.engine;
 
 import com.progressquest.data.GameData;
-import com.progressquest.model.*;
 import com.progressquest.model.Character;
+import com.progressquest.model.Item;
+import com.progressquest.model.Monster;
+import com.progressquest.model.Potion;
+import com.progressquest.model.Quest;
 import com.progressquest.util.RandomNameGenerator;
 
 import java.util.Random;
@@ -19,16 +22,24 @@ public class GameEngine {
     private Consumer<String> onLogUpdate;
     private Runnable onStatsUpdate;
 
-    //estados do jogo
     private Monster currentMonster;
-    private boolean isResting = false;
+    private GameState currentState;
 
     private int actionProgress = 0;
     private int actionMax = 10;
     private String currentAction = "Starting...";
 
+    // --- Combat-only utilities ---
+    // Null means no queued potion.
+    private volatile Potion.Kind pendingPotion = null;
+
+    // Regen tuning
+    public static final double TURN_REGEN_PCT = 0.02;   // 2% per combat turn
+    public static final double POST_COMBAT_REGEN_PCT = 0.20; // 20% after a fight ends
+
     public GameEngine(Character hero) {
         this.hero = hero;
+        this.currentState = new CombatState();
     }
 
     public void setCallbacks(Consumer<String> onLogUpdate, Runnable onStatsUpdate) {
@@ -39,7 +50,6 @@ public class GameEngine {
     public void start() {
         if (scheduler != null && !scheduler.isShutdown()) return;
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        //loop a cada 200ms
         scheduler.scheduleAtFixedRate(this::tick, 0, 200, TimeUnit.MILLISECONDS);
     }
 
@@ -50,96 +60,76 @@ public class GameEngine {
     private void tick() {
         try {
             if (onStatsUpdate != null) onStatsUpdate.run();
-
-            //maquina de estados (descansando ou em batalha?)
-            if (hero.isDead() || isResting) {
-                performRest();
+            // Map-driven state switch: safe zone disables combat.
+            if (GameData.SAFE_ZONE.equals(hero.getCurrentMap())) {
+                if (!(currentState instanceof SafeZoneState)) {
+                    currentState = new SafeZoneState();
+                    actionProgress = 0;
+                }
             } else {
-                performCombatLoop();
+                if (currentState == null || currentState instanceof SafeZoneState) {
+                    currentState = new CombatState();
+                    actionProgress = 0;
+                }
             }
-
+            currentState.update(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void performRest() {
-        currentAction = "Resting (Regenerating HP/MP)...";
-        isResting = true;
-        actionMax = 5;
-        actionProgress++;
-
-        if (actionProgress >= actionMax) {
-            hero.heal(hero.getHpMax() / 10);
-            hero.regenMana(hero.getMpMax() / 10);
-            actionProgress = 0;
-
-            if (hero.getHpCurrent() >= hero.getHpMax()) {
-                isResting = false;
-                log("You are fully rested and ready to fight!");
-                currentMonster = null;
-            }
-        }
+    /** Called by the UI: consume a potion on the next combat turn. */
+    public void requestPotionUse(Potion.Kind kind) {
+        this.pendingPotion = kind;
     }
 
-    private void performCombatLoop() {
-        if (currentMonster == null) {
-            spawnMonster();
-            actionProgress = 0;
+    /**
+     * Used by CombatState to apply a queued potion (if any) at the start of a turn.
+     * Returns true if a potion was consumed.
+     */
+    boolean tryConsumePendingPotion() {
+        Potion.Kind kind = this.pendingPotion;
+        if (kind == null) return false;
+        // Clear request immediately so it doesn't repeat.
+        this.pendingPotion = null;
+
+        for (int i = 0; i < hero.getInventory().size(); i++) {
+            Item it = hero.getInventory().get(i);
+            if (it instanceof Potion p && p.getKind() == kind) {
+                hero.getInventory().remove(i);
+                if (kind == Potion.Kind.HEALTH) {
+                    hero.healPercent(p.getRestorePercent());
+                    log("You drink a health potion (+" + (int)Math.round(p.getRestorePercent() * 100) + "% HP)." );
+                } else {
+                    hero.regenManaPercent(p.getRestorePercent());
+                    log("You drink a mana potion (+" + (int)Math.round(p.getRestorePercent() * 100) + "% MP)." );
+                }
+                return true;
+            }
+        }
+
+        log("No potion of that type in your inventory.");
+        return false;
+    }
+
+    void spawnMonster() {
+        String mobName = GameData.getMonsterFromMap(hero.getCurrentMap());
+        if (mobName == null || mobName.isBlank()) {
+            // Safe-zone or misconfigured map.
+            currentMonster = null;
             return;
         }
-
-        currentAction = "Fighting " + currentMonster.getName();
-        actionMax = 10; //velocidade do turno
-        actionProgress++;
-
-        if (actionProgress >= actionMax) {
-            actionProgress = 0;
-
-            //1 player ataca Monstro
-            int playerDmg = hero.calculateDamage();
-            if (rand.nextInt(20) == 0) playerDmg *= 2; // Crítico
-
-            currentMonster.takeDamage(playerDmg);
-            log("You hit " + currentMonster.getName() + " for " + playerDmg + " damage.");
-
-            //2 monstro morreu?
-            if (currentMonster.isDead()) {
-                handleMonsterDeath();
-                return;
-            }
-
-            //3 monstro ataca player
-            int monsterDmg = currentMonster.getDamage();
-            //redução de dano simples pela armadura
-            Item armor = hero.getEquipment().get(Item.Slot.HAUBERK);
-            if (armor != null) monsterDmg -= (armor.getBonus() / 2);
-            if (monsterDmg < 1) monsterDmg = 1;
-
-            hero.takeDamage(monsterDmg);
-            log(currentMonster.getName() + " hits you for " + monsterDmg + " damage!");
-
-            //player morreu?
-            if (hero.isDead()) {
-                log("You were defeated by " + currentMonster.getName() + "!");
-                isResting = true;
-            }
-        }
-    }
-
-    private void spawnMonster() {
-        //spawna monstro baseado no mapa atual do jogador
-        String mobName = GameData.getMonsterFromMap(hero.getCurrentMap());
         int mobLevel = Math.max(1, hero.getLevel() + (rand.nextInt(3) - 1));
         currentMonster = new Monster(mobName, mobLevel);
         log("You encountered a " + mobName + " (Lvl " + mobLevel + ")!");
     }
 
-    private void handleMonsterDeath() {
+    void handleMonsterDeath() {
         log("You killed " + currentMonster.getName() + "!");
+        int levelBefore = hero.getLevel();
         hero.gainExperience(currentMonster.getRewardXP());
+        int levelAfter = hero.getLevel();
 
-        // dar gold ao jogador
         long gold = currentMonster.getGoldReward();
         if (gold > 0) {
             hero.addGold(gold);
@@ -154,53 +144,99 @@ public class GameEngine {
             log("Looted: " + item.getName());
         }
 
+        // After-combat regeneration (limited): restore 20% of max HP/MP.
+        hero.healPercent(POST_COMBAT_REGEN_PCT);
+        hero.regenManaPercent(POST_COMBAT_REGEN_PCT);
+        log("You catch your breath (+" + (int)Math.round(POST_COMBAT_REGEN_PCT * 100) + "% HP/MP)." );
+
         currentMonster = null;
+
+        if (levelAfter > levelBefore) {
+            setCurrentState(new LevelUpState(levelBefore, levelAfter));
+        }
     }
 
-    private void checkQuestProgress(String killedMonsterName) {
+    void checkQuestProgress(String killedMonsterName) {
         if (hero.getCurrentQuest() == null) {
-            //nova quest
             String target = GameData.generateQuestTarget();
             int amount = 3 + rand.nextInt(3);
-            long rewardGold = 10L * hero.getLevel() + rand.nextInt(21); // 0-20 random
-            Quest q = new Quest(GameData.generateQuestTitle(target), "Hunt them down", amount, 100 * hero.getLevel(), null, rewardGold);
+            long rewardGold = 10L * hero.getLevel() + rand.nextInt(21);
+            Quest q = new Quest(
+                    GameData.generateQuestTitle(target),
+                    "Hunt them down",
+                    amount,
+                    100 * hero.getLevel(),
+                    null,
+                    rewardGold
+            );
             hero.setCurrentQuest(q);
             log("ACCEPTED QUEST: " + q.getTitle() + ". Find them!");
-        } else {
-            //verifica se o monstro morto é o alvo da quest
-            if (hero.getCurrentQuest().getTitle().contains(killedMonsterName)) {
-                hero.getCurrentQuest().registerKill();
-                log("Quest Progress: " + hero.getCurrentQuest().getCurrentKills() + "/" + hero.getCurrentQuest().getRequiredKills());
+            return;
+        }
 
-                if (hero.getCurrentQuest().isCompleted()) {
-                    log("QUEST COMPLETED!");
-                    hero.gainExperience(hero.getCurrentQuest().getRewardXP());
-                    long qGold = hero.getCurrentQuest().getRewardGold();
-                    if (qGold > 0) {
-                        hero.addGold(qGold);
-                        log("You received " + qGold + " gold as quest reward.");
-                    }
-                    hero.setCurrentQuest(null);
+        if (hero.getCurrentQuest().getTitle().contains(killedMonsterName)) {
+            hero.getCurrentQuest().registerKill();
+            log("Quest Progress: " + hero.getCurrentQuest().getCurrentKills() + "/" +
+                    hero.getCurrentQuest().getRequiredKills());
+
+            if (hero.getCurrentQuest().isCompleted()) {
+                log("QUEST COMPLETED!");
+                int levelBefore = hero.getLevel();
+                hero.gainExperience(hero.getCurrentQuest().getRewardXP());
+                int levelAfter = hero.getLevel();
+
+                long qGold = hero.getCurrentQuest().getRewardGold();
+                if (qGold > 0) {
+                    hero.addGold(qGold);
+                    log("You received " + qGold + " gold as quest reward.");
+                }
+
+                hero.setCurrentQuest(null);
+
+                if (levelAfter > levelBefore) {
+                    setCurrentState(new LevelUpState(levelBefore, levelAfter));
                 }
             }
         }
     }
 
-    private Item generateItem() {
-        Item.Slot[] slots = Item.Slot.values();
+    Item generateItem() {
+        // Exclude consumable slot from random equipment drops.
+        Item.Slot[] slots = java.util.Arrays.stream(Item.Slot.values())
+                .filter(s -> s != Item.Slot.POTION)
+                .toArray(Item.Slot[]::new);
         Item.Slot slot = slots[rand.nextInt(slots.length)];
         String name = RandomNameGenerator.randomItemName();
         int bonus = 1 + (hero.getLevel() / 2) + rand.nextInt(3);
         return new Item(name, slot, bonus, "STR");
     }
 
-    private void log(String msg) {
+    void log(String msg) {
         if (onLogUpdate != null) onLogUpdate.accept(msg);
     }
+
+    // Helpers (mantidos sem quebrar chamadas existentes)
+    Character getHero() { return hero; }
+    Random getRand() { return rand; }
+
+    void setCurrentState(GameState newState) {
+        this.currentState = newState;
+        this.actionProgress = 0;
+    }
+
+    public void setResting() { setCurrentState(new RestState()); }
+    public void setFighting() { setCurrentState(new CombatState()); }
+
+    void setCurrentAction(String action) { this.currentAction = action; }
+    void setActionMax(int max) { this.actionMax = max; }
+    void incrementActionProgress() { this.actionProgress++; }
+    void resetActionProgress() { this.actionProgress = 0; }
 
     public int getActionProgress() { return actionProgress; }
     public int getActionMax() { return actionMax; }
     public String getCurrentAction() { return currentAction; }
     public Monster getCurrentMonster() { return currentMonster; }
-}
 
+    Monster _getCurrentMonsterInternal() { return currentMonster; }
+    void _setCurrentMonsterInternal(Monster m) { this.currentMonster = m; }
+}
