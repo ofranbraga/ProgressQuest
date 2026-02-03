@@ -2,16 +2,10 @@ package com.progressquest.model;
 
 import java.util.Random;
 
-public class Monster {
-    private final String name;
-    private final int level;
+public class Monster extends Entity {
     private final long rewardXP;
 
-    private int maxHp;
-    private int currentHp;
     private int damage;
-
-    private double x, y;
 
     // recompensa em ouro
     private final long goldReward;
@@ -21,8 +15,8 @@ public class Monster {
         this.level = level;
         this.rewardXP = 20L * level;
 
-        this.maxHp = 15 + (level * 5);
-        this.currentHp = this.maxHp;
+        this.hpMax = 15 + (level * 5);
+        this.hpCurrent = this.hpMax;
         this.damage = 2 + (level * 2);
 
         //posição aleatória inicial (vai ser sobrescrita pelo spawn)
@@ -40,22 +34,10 @@ public class Monster {
         this.y = r.nextInt(screenHeight - 50);
     }
 
-    public void takeDamage(int dmg) {
-        this.currentHp -= dmg;
-        if (this.currentHp < 0) this.currentHp = 0;
-    }
-
-    public boolean isDead() { return currentHp <= 0; }
-
-    public String getName() { return name; }
-    public int getLevel() { return level; }
     public long getRewardXP() { return rewardXP; }
-    public int getMaxHp() { return maxHp; }
-    public int getCurrentHp() { return currentHp; }
+    public int getMaxHp() { return hpMax; }
+    public int getCurrentHp() { return hpCurrent; }
     public int getDamage() { return damage; }
-
-    public double getX() { return x; }
-    public double getY() { return y; }
 
     public long getGoldReward() { return goldReward; }
 

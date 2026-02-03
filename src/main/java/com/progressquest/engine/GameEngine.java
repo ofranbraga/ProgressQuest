@@ -21,7 +21,7 @@ public class GameEngine {
 
     //estados do jogo
     private Monster currentMonster;
-    private boolean isResting = false;
+    private GameState currentState;
 
     private int actionProgress = 0;
     private int actionMax = 10;
@@ -29,6 +29,7 @@ public class GameEngine {
 
     public GameEngine(Character hero) {
         this.hero = hero;
+        this.currentState = new CombatState();
     }
 
     public void setCallbacks(Consumer<String> onLogUpdate, Runnable onStatsUpdate) {
@@ -51,11 +52,8 @@ public class GameEngine {
         try {
             if (onStatsUpdate != null) onStatsUpdate.run();
 
-            //maquina de estados (descansando ou em batalha?)
-            if (hero.isDead() || isResting) {
-                performRest();
-            } else {
-                performCombatLoop();
+            if (currentState != null) {
+                currentState.update(this);
             }
 
         } catch (Exception e) {
@@ -63,71 +61,7 @@ public class GameEngine {
         }
     }
 
-    private void performRest() {
-        currentAction = "Resting (Regenerating HP/MP)...";
-        isResting = true;
-        actionMax = 5;
-        actionProgress++;
-
-        if (actionProgress >= actionMax) {
-            hero.heal(hero.getHpMax() / 10);
-            hero.regenMana(hero.getMpMax() / 10);
-            actionProgress = 0;
-
-            if (hero.getHpCurrent() >= hero.getHpMax()) {
-                isResting = false;
-                log("You are fully rested and ready to fight!");
-                currentMonster = null;
-            }
-        }
-    }
-
-    private void performCombatLoop() {
-        if (currentMonster == null) {
-            spawnMonster();
-            actionProgress = 0;
-            return;
-        }
-
-        currentAction = "Fighting " + currentMonster.getName();
-        actionMax = 10; //velocidade do turno
-        actionProgress++;
-
-        if (actionProgress >= actionMax) {
-            actionProgress = 0;
-
-            //1 player ataca Monstro
-            int playerDmg = hero.calculateDamage();
-            if (rand.nextInt(20) == 0) playerDmg *= 2; // Crítico
-
-            currentMonster.takeDamage(playerDmg);
-            log("You hit " + currentMonster.getName() + " for " + playerDmg + " damage.");
-
-            //2 monstro morreu?
-            if (currentMonster.isDead()) {
-                handleMonsterDeath();
-                return;
-            }
-
-            //3 monstro ataca player
-            int monsterDmg = currentMonster.getDamage();
-            //redução de dano simples pela armadura
-            Item armor = hero.getEquipment().get(Item.Slot.HAUBERK);
-            if (armor != null) monsterDmg -= (armor.getBonus() / 2);
-            if (monsterDmg < 1) monsterDmg = 1;
-
-            hero.takeDamage(monsterDmg);
-            log(currentMonster.getName() + " hits you for " + monsterDmg + " damage!");
-
-            //player morreu?
-            if (hero.isDead()) {
-                log("You were defeated by " + currentMonster.getName() + "!");
-                isResting = true;
-            }
-        }
-    }
-
-    private void spawnMonster() {
+    void spawnMonster() {
         //spawna monstro baseado no mapa atual do jogador
         String mobName = GameData.getMonsterFromMap(hero.getCurrentMap());
         int mobLevel = Math.max(1, hero.getLevel() + (rand.nextInt(3) - 1));
@@ -135,7 +69,7 @@ public class GameEngine {
         log("You encountered a " + mobName + " (Lvl " + mobLevel + ")!");
     }
 
-    private void handleMonsterDeath() {
+    void handleMonsterDeath() {
         log("You killed " + currentMonster.getName() + "!");
         hero.gainExperience(currentMonster.getRewardXP());
 
@@ -194,7 +128,7 @@ public class GameEngine {
         return new Item(name, slot, bonus, "STR");
     }
 
-    private void log(String msg) {
+    void log(String msg) {
         if (onLogUpdate != null) onLogUpdate.accept(msg);
     }
 
@@ -202,5 +136,13 @@ public class GameEngine {
     public int getActionMax() { return actionMax; }
     public String getCurrentAction() { return currentAction; }
     public Monster getCurrentMonster() { return currentMonster; }
-}
 
+    Character getHero() { return hero; }
+    Random getRand() { return rand; }
+    void setState(GameState state) { this.currentState = state; }
+    void setCurrentAction(String action) { this.currentAction = action; }
+    void setActionMax(int actionMax) { this.actionMax = actionMax; }
+    void incrementActionProgress() { this.actionProgress++; }
+    void resetActionProgress() { this.actionProgress = 0; }
+    void setCurrentMonster(Monster monster) { this.currentMonster = monster; }
+}
